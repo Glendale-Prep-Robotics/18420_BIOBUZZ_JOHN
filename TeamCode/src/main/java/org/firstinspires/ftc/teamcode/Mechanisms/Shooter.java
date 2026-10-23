@@ -13,12 +13,14 @@ import com.pedropathing.math.Pose;
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.robot.Mechanism;
 import dev.nextftc.robot.Telemetry;
+import dev.nextftc.units.Units;
+import dev.nextftc.units.measuretypes.AngularVelocity;
 
 @Config
 public class Shooter implements Mechanism {
-    public double KP = 0;
-    public double KI = 0;
-    public double KD = 0;
+    public static double KP = 0.00003;
+    public static double KI = 0;
+    public static double KD = 0;
     //F then P then D.
 
 
@@ -33,9 +35,8 @@ public class Shooter implements Mechanism {
 
     public static double val;
 
-    public static double motorVelo;
+    public static double motorVelo = 20000;
 
-    public static double currentMotorVelo;
 
     @Override
     public void periodic(){
@@ -51,19 +52,19 @@ public class Shooter implements Mechanism {
                 break;
 
             case ON:
-                val = 100;
+                val = motorVelo;
                 break;
         }
-        shooterMotor1.setVelocitySetpoint(DegreesPerSecond.of(val));
         shooterMotor1.getVelocityConstants()
                 .withP(KP)
                 .withD(KD)
                 .withI(KI);
+        shooterMotor1.setVelocitySetpoint(DegreesPerSecond.of(val));
 // Like kP, other velocity PID constants include:
 // kP, kI, kD, kS, kV, kA
-
-        currentMotorVelo = shooterMotor1.getThrottle();
-        Telemetry.log("Motor Velociuty", currentMotorVelo);
+        AngularVelocity currentVelMeasure = shooterMotor1.getEncoderVelocity();
+        double currentRPM = currentVelMeasure.abs(DegreesPerSecond);
+        Telemetry.log("Motor Velocity", currentRPM);
 
 
     }

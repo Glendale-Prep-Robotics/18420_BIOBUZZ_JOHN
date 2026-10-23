@@ -62,61 +62,66 @@ public class DriverControl extends NextOpMode {
         else {
             Arm.mode = Arm.FlowerPiviotState.UP;
         }
-       if(gamepad1.right_bumper){
-           Intake.mode = Intake.IntakeMode.ON;
-           Feeder.mode = Feeder.FeederMode.ON;
-       }
 
+
+
+        if(gamepad1.bWasPressed()){
+            turretTrack =! turretTrack;
+        }
+
+        if(turretTrack){
+            Turret.mode = Turret.TurretTracking.ON;
+        }
        else{
-           Intake.mode = Intake.IntakeMode.OFF;
-           Feeder.mode = Feeder.FeederMode.OFF;
-       }
+            Turret.mode = Turret.TurretTracking.OFF;
+        }
 
-       if(gamepad1.bWasPressed()){
-           turretTrack =! turretTrack;
-       }
-
-       if(turretTrack){
-           Turret.mode = Turret.TurretTracking.ON;
-       }
+        if(gamepad1.yWasPressed()){
+            ballGo =! ballGo;
+        }
+        if(ballGo){
+            BallBlock.mode = BallBlock.BlockState.BALL_GO;
+        }
        else{
-           Turret.mode = Turret.TurretTracking.OFF;
-       }
+            BallBlock.mode = BallBlock.BlockState.BALL_NO;
+        }
 
-       if(gamepad1.yWasPressed()){
-           ballGo =! ballGo;
-       }
-       if(ballGo){
-           BallBlock.mode = BallBlock.BlockState.BALL_GO;
-       }
+        if(gamepad1.xWasPressed()){
+            hoodOpen =!hoodOpen;
+        }
+
+        if(hoodOpen){
+            Hood.mode = Hood.HoodState.SHOOT;
+        }
        else{
-           BallBlock.mode = BallBlock.BlockState.BALL_NO;
-       }
+            Hood.mode = Hood.HoodState.CLOSE;
+        }
 
-       if(gamepad1.xWasPressed()){
-           hoodOpen =!hoodOpen;
-       }
+        if(gamepad1.left_trigger > 0.5){
+            Shooter.mode = Shooter.ShooterMode.ON;
 
-       if(hoodOpen){
-           Hood.mode = Hood.HoodState.SHOOT;
-       }
+        }
        else{
-           Hood.mode = Hood.HoodState.CLOSE;
-       }
+            Shooter.mode = Shooter.ShooterMode.OFF;
+        }
 
-       if(gamepad1.left_trigger > 0.5){
-           Shooter.mode = Shooter.ShooterMode.ON;
-       }
-       else{
-           Shooter.mode = Shooter.ShooterMode.OFF;
-       }
-
-       Telemetry.log("arm toggle", armDown);
-       Telemetry.log("arm State", Arm.mode);
+        if(gamepad1.left_bumper && !gamepad1.right_bumper){
+            Feeder.mode = Feeder.FeederMode.ON;
+            Intake.mode = Intake.IntakeMode.ON;
+        } else if (gamepad1.right_bumper) {
+            Feeder.mode = Feeder.FeederMode.OFF;
+            Intake.mode = Intake.IntakeMode.ON;
+        }else{
+            Feeder.mode = Feeder.FeederMode.OFF;
+            Intake.mode = Intake.IntakeMode.OFF;
+        }
+        Telemetry.log("arm toggle", armDown);
+        Telemetry.log("arm State", Arm.mode);
        Telemetry.log("Arm Position", Arm.servoPosition);
        Telemetry.log("TurretState", Turret.mode);
        Telemetry.log("ball State", BallBlock.mode);
        Telemetry.log("Hood state", Hood.mode);
+       Telemetry.log("Shooter State", Shooter.mode);
 
        Telemetry.update();
 
