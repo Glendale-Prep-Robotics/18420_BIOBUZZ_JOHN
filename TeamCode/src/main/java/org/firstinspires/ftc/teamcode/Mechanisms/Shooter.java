@@ -63,8 +63,11 @@ public class Shooter implements Mechanism {
 // Like kP, other velocity PID constants include:
 // kP, kI, kD, kS, kV, kA
         AngularVelocity currentVelMeasure = shooterMotor1.getEncoderVelocity();
+        AngularVelocity curentVel2 = shooterMotor2.getEncoderVelocity();
         double currentRPM = currentVelMeasure.abs(DegreesPerSecond);
+        double cureentRPM2 = curentVel2.abs(DegreesPerSecond);
         Telemetry.log("Motor Velocity", currentRPM);
+        Telemetry.log("Motor Velocity 2 ", cureentRPM2);
 
 
     }
