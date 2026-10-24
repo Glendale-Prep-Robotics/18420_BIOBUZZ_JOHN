@@ -11,7 +11,7 @@ public class Hood implements Mechanism {
     NextServo hoodServo1 = new NextServo("hs1");
     //NextServo hoodServo2 = new NextServo("hs2");
 
-    public static double openHoodPosition = 0.3;
+    public static double openHoodPosition = 0.275;
     public static double closeHoodPosition = 0;
     public enum HoodState {
         SHOOT, CLOSE, INIT
