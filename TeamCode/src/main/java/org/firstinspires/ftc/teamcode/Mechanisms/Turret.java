@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
-import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.blueAudienceGoal;
-import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.blueRefereeGoal;
-import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.redAudienceGoal;
-import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.redRefereeGoal;
+import static org.firstinspires.ftc.teamcode.Variables.GoalPose.blueAudienceGoal;
+import static org.firstinspires.ftc.teamcode.Variables.GoalPose.blueRefereeGoal;
+import static org.firstinspires.ftc.teamcode.Variables.GoalPose.redAudienceGoal;
+import static org.firstinspires.ftc.teamcode.Variables.GoalPose.redRefereeGoal;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.math.Pose;

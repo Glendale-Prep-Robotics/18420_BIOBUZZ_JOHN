@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
-import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.blueAudienceGoal;
-import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.blueRefereeGoal;
-import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.redAudienceGoal;
-import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.redRefereeGoal;
+import static org.firstinspires.ftc.teamcode.Variables.GoalPose.blueAudienceGoal;
+import static org.firstinspires.ftc.teamcode.Variables.GoalPose.blueRefereeGoal;
+import static org.firstinspires.ftc.teamcode.Variables.GoalPose.redAudienceGoal;
+import static org.firstinspires.ftc.teamcode.Variables.GoalPose.redRefereeGoal;
 
 import static dev.nextftc.units.Units.DegreesPerSecond;
-import static dev.nextftc.units.Units.Radians;
-import static dev.nextftc.units.Units.getDegreesPerSecond;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.math.Pose;
@@ -16,9 +14,6 @@ import com.qualcomm.robotcore.util.Range;
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.robot.Mechanism;
 import dev.nextftc.robot.Telemetry;
-import dev.nextftc.units.Units;
-import dev.nextftc.units.measuretypes.Angle;
-import dev.nextftc.units.measuretypes.AngularVelocity;
 
 @Config
 public class Shooter implements Mechanism {

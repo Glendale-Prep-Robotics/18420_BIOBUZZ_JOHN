@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mechanisms;
+package org.firstinspires.ftc.teamcode.Variables;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.math.Pose;
