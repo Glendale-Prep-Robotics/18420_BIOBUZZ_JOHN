@@ -34,8 +34,6 @@ public class DriverControl extends NextOpMode {
 
     public boolean turretTrack = false;
 
-    public boolean ballGo = false;
-
     public boolean hoodOpen = false;
 
 
@@ -76,16 +74,6 @@ public class DriverControl extends NextOpMode {
             Turret.mode = Turret.TurretTracking.OFF;
         }
 
-        if(gamepad1.yWasPressed()){
-            ballGo =! ballGo;
-        }
-        if(ballGo){
-            BallBlock.mode = BallBlock.BlockState.BALL_GO;
-        }
-       else{
-            BallBlock.mode = BallBlock.BlockState.BALL_NO;
-        }
-
         if(gamepad1.xWasPressed()){
             hoodOpen =!hoodOpen;
         }
@@ -108,12 +96,15 @@ public class DriverControl extends NextOpMode {
         if(gamepad1.left_bumper && !gamepad1.right_bumper){
             Feeder.mode = Feeder.FeederMode.ON;
             Intake.mode = Intake.IntakeMode.ON;
+            BallBlock.mode = BallBlock.BlockState.BALL_GO;
         } else if (gamepad1.right_bumper) {
-            Feeder.mode = Feeder.FeederMode.OFF;
+            Feeder.mode = Feeder.FeederMode.INTAKE;
             Intake.mode = Intake.IntakeMode.ON;
+            BallBlock.mode = BallBlock.BlockState.BALL_NO;
         }else{
             Feeder.mode = Feeder.FeederMode.OFF;
             Intake.mode = Intake.IntakeMode.OFF;
+            BallBlock.mode = BallBlock.BlockState.BALL_NO;
         }
         Telemetry.log("arm toggle", armDown);
         Telemetry.log("arm State", Arm.mode);

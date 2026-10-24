@@ -11,15 +11,18 @@ public class Feeder implements Mechanism {
     NextMotor FeederMotor = new NextMotor("fm");
 
     public enum FeederMode{
-        ON,OFF,INIT
+        ON,OFF,INIT, INTAKE
 
     }
 
-    public static double FEEDER_ON = 1;
+    public static double FEEDER_ON_SHOOT = 0.7;
+
+
+    public static double FEEDER_ON_INTAKE = 0.2;
 
     public static FeederMode mode = FeederMode.INIT;
 
-    public static double val2;
+    public double val2;
 
     @Override
     public void periodic(){
@@ -28,12 +31,15 @@ public class Feeder implements Mechanism {
                 break;
 
             case ON:
-                val2 = FEEDER_ON;
+                val2 = FEEDER_ON_SHOOT;
                 break;
 
             case OFF:
                 val2 = 0;
                 break;
+
+            case INTAKE:
+                val2 = FEEDER_ON_INTAKE;
         }
 
 

@@ -6,21 +6,28 @@ import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.redAudienceGoal
 import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.redRefereeGoal;
 
 import static dev.nextftc.units.Units.DegreesPerSecond;
+import static dev.nextftc.units.Units.Radians;
+import static dev.nextftc.units.Units.getDegreesPerSecond;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.math.Pose;
+import com.qualcomm.robotcore.util.Range;
 
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.robot.Mechanism;
 import dev.nextftc.robot.Telemetry;
 import dev.nextftc.units.Units;
+import dev.nextftc.units.measuretypes.Angle;
 import dev.nextftc.units.measuretypes.AngularVelocity;
 
 @Config
 public class Shooter implements Mechanism {
-    public static double KP = 0.00003;
-    public static double KI = 0;
-    public static double KD = 0;
+    public static double KP = 0.095;
+    public double KI = 0;
+    public double KD = 0;
+    public static double KV = 0.0000087;
+    public static double KS =0.009;
+    public double KA = 0;
     //F then P then D.
 
 
@@ -33,19 +40,22 @@ public class Shooter implements Mechanism {
 
     public static ShooterMode mode =ShooterMode.OFF;
 
-    public static double val;
+    public double val;
 
-    public static double motorVelo = 20000;
+    public static double motorVelo = 93000;
+
+    public double realSpeed;
 
 
     @Override
     public void periodic(){
 
-        shooterMotor2.follow(shooterMotor1, NextMotor.Direction.FORWARD);
+        shooterMotor1.follow(shooterMotor2, NextMotor.Direction.REVERSE);
         shooterMotor1.setDirection(NextMotor.Direction.REVERSE);
         shooterMotor2.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.FLOAT);
         shooterMotor1.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.FLOAT);
-
+//        shooterMotor1.setAnglePerCount(new Angle(0.22439947142,Radians)); //maybe?
+//        shooterMotor2.setAnglePerCount(new Angle(0.22439947142,Radians));
         switch (mode){
             case OFF:
                 val = 0;
@@ -55,16 +65,33 @@ public class Shooter implements Mechanism {
                 val = motorVelo;
                 break;
         }
-        shooterMotor1.getVelocityConstants()
-                .withP(KP)
-                .withD(KD)
-                .withI(KI);
-        shooterMotor1.setVelocitySetpoint(DegreesPerSecond.of(val));
-// Like kP, other velocity PID constants include:
-// kP, kI, kD, kS, kV, kA
-        AngularVelocity currentVelMeasure = shooterMotor1.getEncoderVelocity();
-        double currentRPM = currentVelMeasure.abs(DegreesPerSecond);
-        Telemetry.log("Motor Velocity", currentRPM);
+
+        double currentSpeed = shooterMotor2.getEncoderVelocity().abs(DegreesPerSecond);
+        double power =  ((KP*(val - currentSpeed))+(KV*val)+(KS*Math.signum(val)));
+
+        realSpeed = Range.clip(power,0,1);
+        shooterMotor1.setThrottle(realSpeed);
+        Telemetry.log("current Speed", currentSpeed);
+        Telemetry.log("setPoint", realSpeed);
+        Telemetry.log("shooter Error", motorVelo-currentSpeed);
+        Telemetry.log("target Speed", motorVelo);
+        Telemetry.log("power", shooterMotor2.getThrottle());
+//        shooterMotor1.getVelocityConstants()
+//                .withP(KP)
+//                .withD(KD)
+//                .withI(KI)
+//                .withV(KV)
+//                .withS(KS)
+//                .withA(KA);
+//        shooterMotor1.setVelocitySetpoint(DegreesPerSecond.of(val));
+//// Like kP, other velocity PID constants include:
+//// kP, kI, kD, kS, kV, kA
+//        AngularVelocity currentVelMeasure = shooterMotor1.getEncoderVelocity();
+//        AngularVelocity curentVel2 = shooterMotor2.getEncoderVelocity();
+//        double currentRPM = currentVelMeasure.abs(DegreesPerSecond);
+//        double cureentRPM2 = curentVel2.abs(DegreesPerSecond);
+//        Telemetry.log("Motor Velocity", currentRPM);
+//        Telemetry.log("Motor Velocity 2 ", cureentRPM2);
 
 
     }

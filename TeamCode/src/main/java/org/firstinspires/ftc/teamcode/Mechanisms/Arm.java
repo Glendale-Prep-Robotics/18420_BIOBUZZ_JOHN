@@ -42,8 +42,6 @@ public class Arm implements Mechanism {
                 break;
         }
         Telemetry.log("Down Position",DOWN_POSITION);
-        Telemetry.log("val", val);
-
 
         flowerArm.setDirection(NextMotor.Direction.REVERSE);
         flowerArm.setPosition(val);
