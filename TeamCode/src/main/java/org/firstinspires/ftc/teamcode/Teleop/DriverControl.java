@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.follower.Follower;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.BallBlock;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
+import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 import dev.nextftc.robot.Telemetry;
 import dev.nextftc.robot.opmode.NextOpMode;
@@ -36,10 +38,11 @@ public class DriverControl extends NextOpMode {
 
     public boolean hoodOpen = false;
 
+    private Follower follower = Constants.create(hardwareMap);
+
 
     @Override
     public void disabledPeriodic() {
-
     }
 
     @Override
@@ -67,10 +70,11 @@ public class DriverControl extends NextOpMode {
             turretTrack =! turretTrack;
         }
 
-        if(turretTrack){
+        if(gamepad1.dpad_down){
             Turret.mode = Turret.TurretTracking.ON;
-        }
-       else{
+        } else if (gamepad1.dpad_up) {
+            Turret.mode = Turret.TurretTracking.ALL;
+        } else{
             Turret.mode = Turret.TurretTracking.OFF;
         }
 
@@ -106,10 +110,19 @@ public class DriverControl extends NextOpMode {
             Intake.mode = Intake.IntakeMode.OFF;
             BallBlock.mode = BallBlock.BlockState.BALL_NO;
         }
+
+        follower.manual(
+                -gamepad1.left_stick_y,
+                -gamepad1.left_stick_x,
+                -gamepad1.right_stick_x
+        );
+        follower.update();
+
+
         Telemetry.log("arm toggle", armDown);
         Telemetry.log("arm State", Arm.mode);
        Telemetry.log("Arm Position", Arm.servoPosition);
-       Telemetry.log("TurretState", Turret.mode);
+       Telemetry.log("Turret State", Turret.mode);
        Telemetry.log("ball State", BallBlock.mode);
        Telemetry.log("Hood state", Hood.mode);
        Telemetry.log("Shooter State", Shooter.mode);

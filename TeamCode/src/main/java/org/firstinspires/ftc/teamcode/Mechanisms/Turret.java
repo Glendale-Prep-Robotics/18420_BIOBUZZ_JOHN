@@ -15,13 +15,13 @@ import dev.nextftc.robot.Mechanism;
 @Config
 public class Turret implements Mechanism {
     public enum TurretTracking{
-        ON, OFF, INIT
+        ON, OFF, INIT, ALL
     }
     public static TurretTracking mode = TurretTracking.INIT;
 
-    public static double turretAngle;
-    public static double noAngle = 0.5;
-    public static double trackingAngle;
+    public double turretAngle;
+    public double noAngle = 0.5;
+    public double trackingAngle;
 
     public static double DEGREES_PER_TICK = 0.00281;
 
@@ -33,22 +33,27 @@ public class Turret implements Mechanism {
     public void periodic(){
         switch (mode){
             case ON:
-                turretAngle = 1;
+                turretAngle = 180;
                 break;
 
             case OFF:
-                turretAngle = noAngle;
+                turretAngle = 0;
                 break;
+
+            case ALL:
+                turretAngle = -180;
 
             case INIT:
                 break;
         }
 
+        double trackingAngle = (turretAngle*DEGREES_PER_TICK) +0.5;
+
         turretServo1.setDirection(NextMotor.Direction.FORWARD);
         turretServo2.setDirection(NextMotor.Direction.FORWARD);
 
-        turretServo1.setPosition(turretAngle);
-        turretServo2.setPosition(turretAngle);
+        turretServo1.setPosition(trackingAngle);
+        turretServo2.setPosition(trackingAngle);
     }
 
     public void getTurretAngle(Pose robotPose, boolean redAllience){
