@@ -18,7 +18,7 @@ public class Feeder implements Mechanism {
     public static double FEEDER_ON_SHOOT = 0.7;
 
 
-    public static double FEEDER_ON_INTAKE = 0.2;
+    public static double FEEDER_ON_INTAKE = 0.3;
 
     public static FeederMode mode = FeederMode.INIT;
 

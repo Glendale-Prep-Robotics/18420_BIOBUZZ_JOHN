@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
+import org.firstinspires.ftc.teamcode.Variables.GlobalPose;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 import dev.nextftc.robot.Telemetry;
@@ -38,6 +39,8 @@ public class DriverControl extends NextOpMode {
 
     public boolean hoodOpen = false;
 
+    public boolean redAllience = false;
+
     private Follower follower = Constants.create(hardwareMap);
 
 
@@ -48,6 +51,7 @@ public class DriverControl extends NextOpMode {
     @Override
     public void start(){
         Telemetry.addBackend(FtcDashboard.getInstance().getTelemetry());
+        follower.setPose(GlobalPose.CurrentPose);
         robot.drive.startDrive(gamepad1);
     }
     @Override
@@ -70,11 +74,10 @@ public class DriverControl extends NextOpMode {
             turretTrack =! turretTrack;
         }
 
-        if(gamepad1.dpad_down){
+        if(gamepad1.y){
             Turret.mode = Turret.TurretTracking.ON;
-        } else if (gamepad1.dpad_up) {
-            Turret.mode = Turret.TurretTracking.ALL;
-        } else{
+        }
+        else{
             Turret.mode = Turret.TurretTracking.OFF;
         }
 
@@ -118,6 +121,8 @@ public class DriverControl extends NextOpMode {
         );
         follower.update();
 
+        robot.turret.getTurretAngle(follower.pose(),redAllience);
+
 
         Telemetry.log("arm toggle", armDown);
         Telemetry.log("arm State", Arm.mode);
@@ -126,6 +131,7 @@ public class DriverControl extends NextOpMode {
        Telemetry.log("ball State", BallBlock.mode);
        Telemetry.log("Hood state", Hood.mode);
        Telemetry.log("Shooter State", Shooter.mode);
+       Telemetry.log("current Mode", follower.pose());
 
        Telemetry.update();
 
