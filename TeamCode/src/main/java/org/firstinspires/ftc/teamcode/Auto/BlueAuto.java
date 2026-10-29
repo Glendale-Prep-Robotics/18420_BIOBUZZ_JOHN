@@ -9,16 +9,20 @@ import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.commands.Commands.instant;
 import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
+import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.BallBlock;
+import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 import org.firstinspires.ftc.teamcode.Teleop.NextRobot;
+import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.robot.opmode.NextAutonomous;
@@ -27,6 +31,7 @@ import dev.nextftc.robot.opmode.NextOpMode;
 @NextAutonomous(name = "BLUE_R")
 
 public class BlueAuto extends NextOpMode {
+    private Follower follower = Constants.create(hardwareMap);
     private final NextRobot robot;
 
     public BlueAuto(NextRobot robot) {
@@ -62,10 +67,134 @@ public class BlueAuto extends NextOpMode {
     private Path grabFlowerGoSecondShootR;
     private Path secondShootRGoEnd;
 
+    private Path StartGoFirstShootA() {
+        return line(startPose, firstShootR).linear(startPose, firstShootR);
+    }
+    private Path getFirstShootAGoGrabGarden(){
+        return line(firstShootR, grabGarden).linear(firstShootR, grabGarden);
+    }
+    private Path getGrabGardenGoFirstTransition(){
+        return line(grabGarden, firstTransition).linear(grabGarden,firstTransition);
+    }
+    private Path getFirstTransitionGoSecondTransition(){
+        return line(firstTransition, secondTransition).linear(firstTransition,secondTransition);
+    }
+    private Path getSecondTransitionGoSecondShootR(){
+        return line(secondTransition, secondShootA).linear(secondTransition, secondShootA);
+    }
+    private Path getSecondShootRGoGrabFlower(){
+        return line(secondShootA, grabFlower).linear(secondShootA, grabFlower);
+    }
+    private Path getGrabFlowerGoSecondShootR(){
+        return line(grabFlower, secondShootA).linear(grabFlower, secondShootA);
+    }
+    private Path getSecondShootRGoEnd(){
+        return line(secondShootA, endPose).linear(secondShootA, endPose);
+    }
+
+
+
+    public Command enableShoot(){
+        return parallel(
+                instant(()-> Turret.mode = Turret.TurretTracking.ON),
+                instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
+                instant(()-> Hood.mode = Hood.HoodState.SHOOT)
+        );
+    }
+    public Command shoot(){
+        return sequential(
+                //new FollowPath(path),
+                instant(()-> Intake.mode = Intake.IntakeMode.ON),
+                instant(()-> Feeder.mode = Feeder.FeederMode.ON),
+                instant(()-> BallBlock.mode =BallBlock.BlockState.BALL_GO)
+        );
+    }
+
+    public Command intake(){
+        return parallel(
+                instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
+                instant(()-> Intake.mode = Intake.IntakeMode.ON),
+                instant(()-> Feeder.mode = Feeder.FeederMode.ON)
+        );
+    }
+    public Command intakeNo(){
+        return parallel(
+                instant(()-> Feeder.mode = Feeder.FeederMode.OFF),
+                instant(()-> Intake.mode = Intake.IntakeMode.OFF),
+                instant(()-> Arm.mode = Arm.FlowerPiviotState.UP)
+        );
+    }
+    public Command intakeToFlower(){
+        return parallel(
+                //new FollowPath(path),
+                instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
+                instant(()-> Intake.mode = Intake.IntakeMode.ON),
+                instant(()-> Arm.mode = Arm.FlowerPiviotState.DOWN),
+                instant(()-> Feeder.mode =  Feeder.FeederMode.INTAKE)
+        );
+    }
+    public Command intakeToGarden(){
+        return parallel(
+                //new FollowPath(path),
+                instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
+                instant(()-> Intake.mode = Intake.IntakeMode.ON)
+        );
+    }
+    public Command go(){
+        return sequential(
+
+
+
+        );
+    }
+    public Command autoRoutine() {
+        return sequential(
+                enableShoot(),
+                follow(follower, startGoFirstShootA), shoot(),
+                intake(),
+                follow(follower, firstShootAGoGrabGarden),
+                intakeNo(),
+                follow(follower, grabGardenGoFirstTransition),
+                follow(follower, firstTransitionGoSecondTransition),
+                follow(follower, secondTransitionGoSecondShootR), shoot(),
+                intakeToFlower(),
+                follow(follower, secondShootRGoGrabFlower),
+                intakeNo(),
+                follow(follower, grabFlowerGoSecondShootR), shoot(),
+                follow(follower, secondShootRGoEnd)
+
+        );
+
+    }
 
 
 
 
+    @Override
+    public void disabledPeriodic() {
 
+
+    }
+
+    @Override
+    public void start() {
+        schedule(autoRoutine());
+
+    }
+
+    @Override
+    public void periodic() {//loop
+        follower.update();
+        Scheduler.execute();
+
+    }
 
 }
+
+
+
+
+
+
+
+
