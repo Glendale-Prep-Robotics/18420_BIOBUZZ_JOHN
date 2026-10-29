@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
+import org.firstinspires.ftc.teamcode.Variables.GlobalPose;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 import dev.nextftc.robot.Telemetry;
@@ -38,6 +39,8 @@ public class DriverControl extends NextOpMode {
 
     public boolean hoodOpen = false;
 
+    public boolean redAllience = false;
+
     private Follower follower = Constants.create(hardwareMap);
 
 
@@ -48,13 +51,16 @@ public class DriverControl extends NextOpMode {
     @Override
     public void start(){
         Telemetry.addBackend(FtcDashboard.getInstance().getTelemetry());
+        follower.setPose(GlobalPose.CurrentPose);
         robot.drive.startDrive(gamepad1);
     }
     @Override
     public void periodic() {
 
-        if(gamepad1.aWasPressed()){
-            armDown =!armDown;
+        if(gamepad2.dpadDownWasPressed() && armDown == false){
+            armDown = true;
+        } else if (gamepad2.dpadUpWasPressed() && armDown == true) {
+            armDown = false;
         }
 
         if(armDown){
@@ -66,42 +72,32 @@ public class DriverControl extends NextOpMode {
 
 
 
-        if(gamepad1.bWasPressed()){
+        if(gamepad2.bWasPressed()){
             turretTrack =! turretTrack;
         }
 
-        if(gamepad1.dpad_down){
+        if(gamepad2.y){
             Turret.mode = Turret.TurretTracking.ON;
-        } else if (gamepad1.dpad_up) {
-            Turret.mode = Turret.TurretTracking.ALL;
-        } else{
+        }
+        else{
             Turret.mode = Turret.TurretTracking.OFF;
         }
 
-        if(gamepad1.xWasPressed()){
-            hoodOpen =!hoodOpen;
-        }
-
-        if(hoodOpen){
-            Hood.mode = Hood.HoodState.SHOOT;
-        }
-       else{
-            Hood.mode = Hood.HoodState.CLOSE;
-        }
-
-        if(gamepad1.left_trigger > 0.5){
+        if(gamepad2.left_trigger > 0.5){
             Shooter.mode = Shooter.ShooterMode.ON;
+            Hood.mode = Hood.HoodState.SHOOT;
 
         }
        else{
             Shooter.mode = Shooter.ShooterMode.OFF;
+            Hood.mode = Hood.HoodState.CLOSE;
         }
 
-        if(gamepad1.left_bumper && !gamepad1.right_bumper){
+        if(gamepad2.left_bumper){
             Feeder.mode = Feeder.FeederMode.ON;
             Intake.mode = Intake.IntakeMode.ON;
             BallBlock.mode = BallBlock.BlockState.BALL_GO;
-        } else if (gamepad1.right_bumper) {
+        } else if (gamepad2.right_bumper) {
             Feeder.mode = Feeder.FeederMode.INTAKE;
             Intake.mode = Intake.IntakeMode.ON;
             BallBlock.mode = BallBlock.BlockState.BALL_NO;
@@ -111,11 +107,8 @@ public class DriverControl extends NextOpMode {
             BallBlock.mode = BallBlock.BlockState.BALL_NO;
         }
 
-        follower.manual(
-                -gamepad1.left_stick_y,
-                -gamepad1.left_stick_x,
-                -gamepad1.right_stick_x
-        );
+        robot.turret.getTurretAngle(follower.pose(),redAllience);
+
         follower.update();
 
 
@@ -126,9 +119,7 @@ public class DriverControl extends NextOpMode {
        Telemetry.log("ball State", BallBlock.mode);
        Telemetry.log("Hood state", Hood.mode);
        Telemetry.log("Shooter State", Shooter.mode);
-
-       Telemetry.update();
-
+       Telemetry.log("current Pose", follower.pose());
 
     }
 
