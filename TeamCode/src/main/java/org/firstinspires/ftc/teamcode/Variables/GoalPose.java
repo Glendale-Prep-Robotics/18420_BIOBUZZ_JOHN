@@ -6,6 +6,9 @@ import com.pedropathing.math.Pose;
 @Config
 public class GoalPose {
 
+
+    public static int fieldLengthXY = 144;
+
     public static Pose redAudienceGoal = new Pose(58,60);
     public static Pose redRefereeGoal = new Pose(58,75);
     public static Pose blueRefereeGoal = new Pose(85,75);

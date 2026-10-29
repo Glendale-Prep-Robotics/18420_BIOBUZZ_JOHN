@@ -18,6 +18,7 @@ dependencies {
 
     implementation 'com.pedropathing:revhub:3.0.2'
     implementation 'com.pedropathing:tuning:1.0.0'
+    implementation 'com.pedropathing.ivy:pedro:1.1.1' //for follow command in auto
 
     implementation("dev.frozenmilk.sinister:Sloth:0.3.2")
 

@@ -7,24 +7,32 @@ import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
+import com.pedropathing.ivy.CommandBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import static com.pedropathing.ivy.pedro.PedroCommands.follow;
+
+import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.commands.Commands.instant;
 import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.BallBlock;
+import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 import org.firstinspires.ftc.teamcode.Teleop.NextRobot;
+import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.opencv.features2d.Feature2D;
 
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.robot.opmode.NextAutonomous;
 import dev.nextftc.robot.opmode.NextOpMode;
 
-@NextAutonomous(name = "RED_AUTO")
+@NextAutonomous(name = "RED_A")
 public class RedAuto extends NextOpMode {
     private final NextRobot robot;
 
@@ -33,10 +41,12 @@ public class RedAuto extends NextOpMode {
         this.robot = robot;
     }
 
+    //public static Follower follower = Constants.create(HardwareMap);
+    private Follower follower = Constants.create(hardwareMap);
     public static double HeadingR = 90;
     public static double HeadingA = 270;
 
-    public static int fieldLengthXY = 144;
+  
 
     public static double ballNo = 0.6;
     public static double ballGo = 0.4;
@@ -93,19 +103,36 @@ public class RedAuto extends NextOpMode {
                 instant(()-> Hood.mode = Hood.HoodState.SHOOT)
         );
     }
-    public Command shooot(){
+    public Command shoot(){
         return sequential(
                 //new FollowPath(path),
                 instant(()-> Intake.mode = Intake.IntakeMode.ON),
+                instant(()-> Feeder.mode = Feeder.FeederMode.ON),
                 instant(()-> BallBlock.mode =BallBlock.BlockState.BALL_GO)
+        );
+    }
+
+    public Command intake(){
+        return parallel(
+          instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
+          instant(()-> Intake.mode = Intake.IntakeMode.ON),
+          instant(()-> Feeder.mode = Feeder.FeederMode.ON)
+        );
+    }
+    public Command intakeNo(){
+        return parallel(
+          instant(()-> Feeder.mode = Feeder.FeederMode.OFF),
+          instant(()-> Intake.mode = Intake.IntakeMode.OFF),
+          instant(()-> Arm.mode = Arm.FlowerPiviotState.UP)
         );
     }
     public Command intakeToFlower(){
         return parallel(
                 //new FollowPath(path),
                 instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
-                instant(()-> Intake.mode = Intake.IntakeMode.ON)
-
+                instant(()-> Intake.mode = Intake.IntakeMode.ON),
+                instant(()-> Arm.mode = Arm.FlowerPiviotState.DOWN),
+                instant(()-> Feeder.mode =  Feeder.FeederMode.INTAKE)
         );
     }
     public Command intakeToGarden(){
@@ -117,9 +144,33 @@ public class RedAuto extends NextOpMode {
     }
     public Command go(){
         return sequential(
-                //new FollowPath(path)
+
+
+
         );
     }
+    public Command autoRoutine() {
+        return sequential(
+                enableShoot(),
+                follow(follower, startGoFirstShootA), shoot(),
+                intake(),
+                follow(follower, firstShootAGoGrabGarden),
+                intakeNo(),
+                follow(follower, grabGardenGoFirstTransition),
+                follow(follower, firstTransitionGoSecondTransition),
+                follow(follower, secondTransitionGoSecondShootR), shoot(),
+                intakeToFlower(),
+                follow(follower, secondShootRGoGrabFlower),
+                intakeNo(),
+                follow(follower, grabFlowerGoSecondShootR), shoot(),
+                follow(follower, secondShootRGoEnd)
+
+        );
+
+    }
+
+
+
 
     @Override
     public void disabledPeriodic() {
@@ -129,20 +180,14 @@ public class RedAuto extends NextOpMode {
 
     @Override
     public void start() {
+        schedule(autoRoutine());
 
     }
 
     @Override
-    public void periodic() {
-        sequential(
-        enableShoot()
-
-
-
-
-
-
-        );
+    public void periodic() {//loop
+        follower.update();
+        Scheduler.execute();
 
     }
 
