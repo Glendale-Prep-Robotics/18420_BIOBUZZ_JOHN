@@ -35,17 +35,30 @@ public class DriverControl extends NextOpMode {
 
     public boolean armDown = false;
 
-    public boolean turretTrack = false;
+    public boolean shooterOn = false;
 
-    public boolean hoodOpen = false;
 
     public boolean redAllience = false;
 
     private Follower follower = Constants.create(hardwareMap);
 
+    public enum ShooterOnMode{
+        ON, OFF
+    }
+
+    public ShooterOnMode shooter = ShooterOnMode.OFF;
+
 
     @Override
     public void disabledPeriodic() {
+        if(gamepad1.dpadUpWasPressed()){
+            redAllience  =false;
+        }
+        if(gamepad1.dpadDownWasPressed()){
+            redAllience = true;
+        }
+
+        Telemetry.log("red Allience boolean", redAllience);
     }
 
     @Override
@@ -57,12 +70,20 @@ public class DriverControl extends NextOpMode {
     @Override
     public void periodic() {
 
+        if(gamepad1.bWasPressed()){
+            if (redAllience){
+                follower.setPose(GlobalPose.redZeroPose);
+            }
+            else{
+                follower.setPose(GlobalPose.blueZeroPose);
+            }
+        }
+
         if(gamepad2.dpadDownWasPressed() && armDown == false){
             armDown = true;
         } else if (gamepad2.dpadUpWasPressed() && armDown == true) {
             armDown = false;
         }
-
         if(armDown){
             Arm.mode = Arm.FlowerPiviotState.DOWN;
         }
@@ -71,37 +92,47 @@ public class DriverControl extends NextOpMode {
         }
 
 
-
-        if(gamepad2.bWasPressed()){
-            turretTrack =! turretTrack;
-        }
-
-        if(gamepad2.y){
+        if(gamepad2.left_bumper){
             Turret.mode = Turret.TurretTracking.ON;
         }
         else{
             Turret.mode = Turret.TurretTracking.OFF;
         }
 
-        if(gamepad2.left_trigger > 0.5){
+        if(gamepad2.yWasPressed()){
+            shooterOn =!shooterOn;
+        }
+
+        if(shooterOn){
             Shooter.mode = Shooter.ShooterMode.ON;
             Hood.mode = Hood.HoodState.SHOOT;
+            shooter = ShooterOnMode.ON;
 
         }
        else{
             Shooter.mode = Shooter.ShooterMode.OFF;
             Hood.mode = Hood.HoodState.CLOSE;
+            shooter = ShooterOnMode.OFF;
         }
 
-        if(gamepad2.left_bumper){
-            Feeder.mode = Feeder.FeederMode.ON;
-            Intake.mode = Intake.IntakeMode.ON;
-            BallBlock.mode = BallBlock.BlockState.BALL_GO;
-        } else if (gamepad2.right_bumper) {
-            Feeder.mode = Feeder.FeederMode.INTAKE;
-            Intake.mode = Intake.IntakeMode.ON;
-            BallBlock.mode = BallBlock.BlockState.BALL_NO;
-        }else{
+        if(gamepad2.left_trigger > 0.5) {
+            switch (shooter) {
+                case ON:
+                    Feeder.mode = Feeder.FeederMode.ON;
+                    Intake.mode = Intake.IntakeMode.ON;
+                    BallBlock.mode = BallBlock.BlockState.BALL_GO;
+                    break;
+
+                case OFF:
+                    Feeder.mode = Feeder.FeederMode.INTAKE;
+                    Intake.mode = Intake.IntakeMode.ON;
+                    BallBlock.mode = BallBlock.BlockState.BALL_NO;
+                    break;
+            }
+        }else if (gamepad2.b) {
+            Intake.mode = Intake.IntakeMode.REVERSE;
+            Feeder.mode = Feeder.FeederMode.REVERSE;
+        } else{
             Feeder.mode = Feeder.FeederMode.OFF;
             Intake.mode = Intake.IntakeMode.OFF;
             BallBlock.mode = BallBlock.BlockState.BALL_NO;
@@ -112,6 +143,7 @@ public class DriverControl extends NextOpMode {
         follower.update();
 
 
+        Telemetry.log("red Allience Boolean", redAllience);
         Telemetry.log("arm toggle", armDown);
         Telemetry.log("arm State", Arm.mode);
        Telemetry.log("Arm Position", Arm.servoPosition);
