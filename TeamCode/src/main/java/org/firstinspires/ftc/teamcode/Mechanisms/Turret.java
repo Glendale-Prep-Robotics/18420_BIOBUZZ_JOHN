@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.Variables.GoalPose.blueAudienceGoal;
 import static org.firstinspires.ftc.teamcode.Variables.GoalPose.blueRefereeGoal;
 import static org.firstinspires.ftc.teamcode.Variables.GoalPose.redAudienceGoal;
 import static org.firstinspires.ftc.teamcode.Variables.GoalPose.redRefereeGoal;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
+import com.pedropathing.utils.Angle;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.opencv.core.Mat;
 
 import dev.nextftc.hardware.actuators.NextMotor;
@@ -40,7 +44,7 @@ public class Turret implements Mechanism {
                 break;
 
             case OFF:
-                turretAngle = 0;
+                turretAngle = 0.5;
                 break;
 
             case INIT:
@@ -57,6 +61,7 @@ public class Turret implements Mechanism {
 
         Telemetry.log("turretServo1 position", turretServo1.getPosition());
         Telemetry.log("turretServo2 position", turretServo2.getPosition());
+
     }
 
     public void getTurretAngle(Pose robotPose, boolean redAllience){
@@ -89,14 +94,16 @@ public class Turret implements Mechanism {
         double distance = Math.sqrt((xVal*xVal)+(yVal*yVal));
         double angle = Math.atan2(yVal,xVal);
 
-        double trueAngle = Math.toDegrees(robotHeading - angle);
+        double trueAngle = Angle.normalizeSigned(robotHeading - angle);
 //        if (trueAngle > 360){
 //            trueAngle -= 360;
 //        } else if (trueAngle < -360) {
 //            trueAngle +=360;
 //        }
 
-        trackingAngle = (trueAngle*DEGREES_PER_TICK) +0.5;
+        double trueAngleDegrees = Math.toDegrees(trueAngle);
+
+        trackingAngle = (trueAngleDegrees*DEGREES_PER_TICK) +0.5;
 
         Telemetry.log("target Angle", trueAngle);
         Telemetry.log("robo heading", Math.toDegrees(robotHeading));

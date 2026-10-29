@@ -57,8 +57,10 @@ public class DriverControl extends NextOpMode {
     @Override
     public void periodic() {
 
-        if(gamepad1.aWasPressed()){
-            armDown =!armDown;
+        if(gamepad2.dpadDownWasPressed() && armDown == false){
+            armDown = true;
+        } else if (gamepad2.dpadUpWasPressed() && armDown == true) {
+            armDown = false;
         }
 
         if(armDown){
@@ -70,41 +72,32 @@ public class DriverControl extends NextOpMode {
 
 
 
-        if(gamepad1.bWasPressed()){
+        if(gamepad2.bWasPressed()){
             turretTrack =! turretTrack;
         }
 
-        if(gamepad1.y){
+        if(gamepad2.y){
             Turret.mode = Turret.TurretTracking.ON;
         }
         else{
             Turret.mode = Turret.TurretTracking.OFF;
         }
 
-        if(gamepad1.xWasPressed()){
-            hoodOpen =!hoodOpen;
-        }
-
-        if(hoodOpen){
-            Hood.mode = Hood.HoodState.SHOOT;
-        }
-       else{
-            Hood.mode = Hood.HoodState.CLOSE;
-        }
-
-        if(gamepad1.left_trigger > 0.5){
+        if(gamepad2.left_trigger > 0.5){
             Shooter.mode = Shooter.ShooterMode.ON;
+            Hood.mode = Hood.HoodState.SHOOT;
 
         }
        else{
             Shooter.mode = Shooter.ShooterMode.OFF;
+            Hood.mode = Hood.HoodState.CLOSE;
         }
 
-        if(gamepad1.left_bumper && !gamepad1.right_bumper){
+        if(gamepad2.left_bumper){
             Feeder.mode = Feeder.FeederMode.ON;
             Intake.mode = Intake.IntakeMode.ON;
             BallBlock.mode = BallBlock.BlockState.BALL_GO;
-        } else if (gamepad1.right_bumper) {
+        } else if (gamepad2.right_bumper) {
             Feeder.mode = Feeder.FeederMode.INTAKE;
             Intake.mode = Intake.IntakeMode.ON;
             BallBlock.mode = BallBlock.BlockState.BALL_NO;
@@ -114,14 +107,9 @@ public class DriverControl extends NextOpMode {
             BallBlock.mode = BallBlock.BlockState.BALL_NO;
         }
 
-        follower.manual(
-                -gamepad1.left_stick_y,
-                -gamepad1.left_stick_x,
-                -gamepad1.right_stick_x
-        );
-        follower.update();
-
         robot.turret.getTurretAngle(follower.pose(),redAllience);
+
+        follower.update();
 
 
         Telemetry.log("arm toggle", armDown);
@@ -131,10 +119,7 @@ public class DriverControl extends NextOpMode {
        Telemetry.log("ball State", BallBlock.mode);
        Telemetry.log("Hood state", Hood.mode);
        Telemetry.log("Shooter State", Shooter.mode);
-       Telemetry.log("current Mode", follower.pose());
-
-       Telemetry.update();
-
+       Telemetry.log("current Pose", follower.pose());
 
     }
 
