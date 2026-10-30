@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
 
+import static org.firstinspires.ftc.teamcode.Variables.GlobalPose.redAllience;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
@@ -36,9 +38,6 @@ public class DriverControl extends NextOpMode {
     public boolean armDown = false;
 
     public boolean shooterOn = false;
-
-
-    public boolean redAllience = false;
 
     private Follower follower = Constants.create(hardwareMap);
 

@@ -58,13 +58,13 @@ public class BlueAuto extends NextOpMode {
     private final Pose grabFlower = new Pose(fieldLengthXY-47,fieldLengthXY-133,Math.toRadians(HeadingA));
     private final Pose endPose = new Pose(fieldLengthXY-15,fieldLengthXY-115,Math.toRadians(HeadingA));
 
-    private Path startGoFirstShootA;
-    private Path firstShootAGoGrabGarden;
+    private Path startGoFirstShootR;
+    private Path firstShootRGoGrabGarden;
     private Path grabGardenGoFirstTransition;
     private Path firstTransitionGoSecondTransition;
-    private Path secondTransitionGoSecondShootR;
-    private Path secondShootRGoGrabFlower;
-    private Path grabFlowerGoSecondShootR;
+    private Path secondTransitionGoSecondShootA;
+    private Path secondShootAGoGrabFlower;
+    private Path grabFlowerGoSecondShootA;
     private Path secondShootRGoEnd;
 
     private Path StartGoFirstShootA() {
@@ -149,19 +149,19 @@ public class BlueAuto extends NextOpMode {
     }
     public Command autoRoutine() {
         return sequential(
-                enableShoot(),
-                follow(follower, startGoFirstShootA), shoot(),
-                intake(),
-                follow(follower, firstShootAGoGrabGarden),
-                intakeNo(),
-                follow(follower, grabGardenGoFirstTransition),
-                follow(follower, firstTransitionGoSecondTransition),
-                follow(follower, secondTransitionGoSecondShootR), shoot(),
-                intakeToFlower(),
-                follow(follower, secondShootRGoGrabFlower),
-                intakeNo(),
-                follow(follower, grabFlowerGoSecondShootR), shoot(),
-                follow(follower, secondShootRGoEnd)
+//                enableShoot(),
+//                follow(follower, startGoFirstShootA), shoot(),
+//                intake(),
+//                follow(follower, firstShootAGoGrabGarden),
+//                intakeNo(),
+//                follow(follower, grabGardenGoFirstTransition),
+//                follow(follower, firstTransitionGoSecondTransition),
+//                follow(follower, secondTransitionGoSecondShootR), shoot(),
+//                intakeToFlower(),
+//                follow(follower, secondShootRGoGrabFlower),
+//                intakeNo(),
+//                follow(follower, grabFlowerGoSecondShootR), shoot(),
+//                follow(follower, secondShootRGoEnd)
 
         );
 
