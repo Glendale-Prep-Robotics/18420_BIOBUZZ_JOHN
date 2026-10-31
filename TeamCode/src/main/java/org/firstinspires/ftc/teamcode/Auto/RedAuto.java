@@ -89,66 +89,66 @@ public class RedAuto extends NextOpMode {
 
 
 
-//    public Command enableShoot(){
-//        return parallel(
-//                instant(()-> Turret.mode = Turret.TurretTracking.ON),
-//                instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
-//                instant(()-> Hood.mode = Hood.HoodState.SHOOT)
-//        );
-//    }
-//    public Command shoot(){
-//        return sequential(
-//                //new FollowPath(path),
-//                instant(()-> Intake.mode = Intake.IntakeMode.ON),
-//                instant(()-> Feeder.mode = Feeder.FeederMode.ON),
-//                instant(()-> BallBlock.mode =BallBlock.BlockState.BALL_GO)
-//        );
-//    }
-//
-//    public Command intake(){
-//        return parallel(
-//          instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
-//          instant(()-> Intake.mode = Intake.IntakeMode.ON),
-//          instant(()-> Feeder.mode = Feeder.FeederMode.ON)
-//        );
-//    }
-//    public Command intakeNo(){
-//        return parallel(
-//          instant(()-> Feeder.mode = Feeder.FeederMode.OFF),
-//          instant(()-> Intake.mode = Intake.IntakeMode.OFF),
-//          instant(()-> Arm.mode = Arm.FlowerPiviotState.UP)
-//        );
-//    }
-//    public Command intakeToFlower(){
-//        return parallel(
-//                //new FollowPath(path),
-//                instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
-//                instant(()-> Intake.mode = Intake.IntakeMode.ON),
-//                instant(()-> Arm.mode = Arm.FlowerPiviotState.DOWN),
-//                instant(()-> Feeder.mode =  Feeder.FeederMode.INTAKE)
-//        );
-//    }
-//    public Command intakeToGarden(){
-//        return parallel(
-//                //new FollowPath(path),
-//                instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
-//                instant(()-> Intake.mode = Intake.IntakeMode.ON)
-//        );
-//    }
+    public Command enableShoot(){
+        return parallel(
+                instant(()-> Turret.mode = Turret.TurretTracking.ON),
+                instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
+                instant(()-> Hood.mode = Hood.HoodState.SHOOT)
+        );
+    }
+    public Command shoot(){
+        return sequential(
+                //new FollowPath(path),
+                instant(()-> Intake.mode = Intake.IntakeMode.ON),
+                instant(()-> Feeder.mode = Feeder.FeederMode.ON),
+                instant(()-> BallBlock.mode =BallBlock.BlockState.BALL_GO)
+        );
+    }
+
+    public Command intake(){
+        return parallel(
+          instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
+          instant(()-> Intake.mode = Intake.IntakeMode.ON),
+          instant(()-> Feeder.mode = Feeder.FeederMode.ON)
+        );
+    }
+    public Command intakeNo(){
+        return parallel(
+          instant(()-> Feeder.mode = Feeder.FeederMode.OFF),
+          instant(()-> Intake.mode = Intake.IntakeMode.OFF),
+          instant(()-> Arm.mode = Arm.FlowerPiviotState.UP)
+        );
+    }
+    public Command intakeToFlower(){
+        return parallel(
+                //new FollowPath(path),
+                instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
+                instant(()-> Intake.mode = Intake.IntakeMode.ON),
+                instant(()-> Arm.mode = Arm.FlowerPiviotState.DOWN),
+                instant(()-> Feeder.mode =  Feeder.FeederMode.INTAKE)
+        );
+    }
+    public Command intakeToGarden(){
+        return parallel(
+                //new FollowPath(path),
+                instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
+                instant(()-> Intake.mode = Intake.IntakeMode.ON)
+        );
+    }
     public Command autoRoutine() {
         return sequential(
-                //enableShoot(),
-                follow(follower, getStartGoFirstShootA()), //shoot(),
-                //intake(),
+                enableShoot(),
+                follow(follower, getStartGoFirstShootA()), shoot(),
+                intake(),
                 follow(follower, getFirstShootAGoGrabGarden()),
-                //intakeNo(),
+                intakeNo(),
                 follow(follower, getGrabGardenGoFirstTransition()),
                 follow(follower, getFirstTransitionGoSecondTransition()),
-                follow(follower, getSecondTransitionGoSecondShootR()),// shoot(),
-                //intakeToFlower(),
+                follow(follower, getSecondTransitionGoSecondShootR()), shoot(),
+                intakeToFlower(),
                 follow(follower, getSecondShootRGoGrabFlower()),
-                //intakeNo(),
-                follow(follower, getGrabFlowerGoSecondShootR()), //shoot(),
+                intakeNo(),
+                follow(follower, getGrabFlowerGoSecondShootR()), shoot(),
                 follow(follower, getSecondShootRGoEnd())
 
         );
