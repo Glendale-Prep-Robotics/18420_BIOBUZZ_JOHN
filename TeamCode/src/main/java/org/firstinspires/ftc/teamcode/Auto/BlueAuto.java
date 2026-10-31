@@ -58,16 +58,8 @@ public class BlueAuto extends NextOpMode {
     private final Pose grabFlower = new Pose(fieldLengthXY-47,fieldLengthXY-133,Math.toRadians(HeadingA));
     private final Pose endPose = new Pose(fieldLengthXY-15,fieldLengthXY-115,Math.toRadians(HeadingA));
 
-    private Path startGoFirstShootA;
-    private Path firstShootAGoGrabGarden;
-    private Path grabGardenGoFirstTransition;
-    private Path firstTransitionGoSecondTransition;
-    private Path secondTransitionGoSecondShootR;
-    private Path secondShootRGoGrabFlower;
-    private Path grabFlowerGoSecondShootR;
-    private Path secondShootRGoEnd;
 
-    private Path StartGoFirstShootA() {
+    private Path getStartGoFirstShootA() {
         return line(startPose, firstShootR).linear(startPose, firstShootR);
     }
     private Path getFirstShootAGoGrabGarden(){
@@ -150,18 +142,18 @@ public class BlueAuto extends NextOpMode {
     public Command autoRoutine() {
         return sequential(
                 enableShoot(),
-                follow(follower, startGoFirstShootA), shoot(),
+                follow(follower, getStartGoFirstShootA()), shoot(),
                 intake(),
-                follow(follower, firstShootAGoGrabGarden),
+                follow(follower, getFirstShootAGoGrabGarden()),
                 intakeNo(),
-                follow(follower, grabGardenGoFirstTransition),
-                follow(follower, firstTransitionGoSecondTransition),
-                follow(follower, secondTransitionGoSecondShootR), shoot(),
+                follow(follower, getGrabGardenGoFirstTransition()),
+                follow(follower, getFirstTransitionGoSecondTransition()),
+                follow(follower, getSecondTransitionGoSecondShootR()), shoot(),
                 intakeToFlower(),
-                follow(follower, secondShootRGoGrabFlower),
+                follow(follower, getSecondShootRGoGrabFlower()),
                 intakeNo(),
-                follow(follower, grabFlowerGoSecondShootR), shoot(),
-                follow(follower, secondShootRGoEnd)
+                follow(follower, getGrabFlowerGoSecondShootR()), shoot(),
+                follow(follower, getSecondShootRGoEnd())
 
         );
 
@@ -172,6 +164,10 @@ public class BlueAuto extends NextOpMode {
 
     @Override
     public void disabledPeriodic() {
+        Scheduler.reset();
+        follower.setPose(startPose);
+        follower.update();
+
 
 
     }

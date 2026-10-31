@@ -164,16 +164,20 @@ public class RedAuto extends NextOpMode {
 
 
 
+
+
     @Override
     public void disabledPeriodic() {
 
+        Scheduler.reset();
+        follower.setPose(startPose);
+        follower.update();
+
 
     }
-
     @Override
     public void start() {
         schedule(autoRoutine());
-
     }
 
     @Override
