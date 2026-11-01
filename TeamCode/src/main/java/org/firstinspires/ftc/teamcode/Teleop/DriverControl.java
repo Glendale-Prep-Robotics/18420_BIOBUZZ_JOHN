@@ -92,7 +92,7 @@ public class DriverControl extends NextOpMode {
     @Override
     public void periodic() {
 
-        /// CHOOSEPAD IS NORMALLY GAMEPAD2
+        /// CHOOSE PAD IS NORMALLY GAMEPAD2
 
         if(gamepad1.bWasPressed()){
             if (redAllience){
