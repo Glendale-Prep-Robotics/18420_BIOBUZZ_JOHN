@@ -21,6 +21,7 @@ import dev.nextftc.robot.Telemetry;
 import dev.nextftc.robot.opmode.NextOpMode;
 import dev.nextftc.robot.opmode.NextTeleop;
 import dev.nextftc.robot.triggers.CommandGamepad;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 @Config
 @NextTeleop(name = "DriverControl")
@@ -34,6 +35,13 @@ public class DriverControl extends NextOpMode {
 
     CommandGamepad gp1 = new CommandGamepad(gamepad1);
     CommandGamepad gp2 = new CommandGamepad(gamepad2);
+
+    public enum PlayerAmount {
+        TWO_PLAYERS,
+        ONE_PLAYERS
+    }
+    PlayerAmount playerAmount = PlayerAmount.TWO_PLAYERS;
+    Gamepad choosePad;
 
     public boolean armDown = false;
 
@@ -51,13 +59,28 @@ public class DriverControl extends NextOpMode {
     @Override
     public void disabledPeriodic() {
         if(gamepad1.dpadUpWasPressed()){
-            redAllience  =false;
+            redAllience  = false;
         }
         if(gamepad1.dpadDownWasPressed()){
             redAllience = true;
         }
+        // Little enum that changes amount of players
+        if(gamepad1.dpadLeftWasPressed() || gamepad1.dpadRightWasPressed())  {
+            if(playerAmount == PlayerAmount.TWO_PLAYERS) {
+                playerAmount = PlayerAmount.ONE_PLAYERS;
+            } else {
+                playerAmount = PlayerAmount.TWO_PLAYERS;
+            }
+        }
 
-        Telemetry.log("red Allience boolean", redAllience);
+        String colorMessage = redAllience ? "YOU ON RED!!!" : "YOU ON BLUE!!!";
+        Telemetry.log(colorMessage);
+
+        //YO YO YO MY GABE MAN YOU CAN CHANGE IF YOU WANT
+        //Telemetry.log("red alliance boolean", redAllience);
+
+        Telemetry.log("Player Amount:",playerAmount);
+        choosePad = playerAmount == PlayerAmount.TWO_PLAYERS ? gamepad2 : gamepad1;
     }
 
     @Override
@@ -69,6 +92,8 @@ public class DriverControl extends NextOpMode {
     @Override
     public void periodic() {
 
+        /// CHOOSEPAD IS NORMALLY GAMEPAD2
+
         if(gamepad1.bWasPressed()){
             if (redAllience){
                 follower.setPose(GlobalPose.redZeroPose);
@@ -78,9 +103,9 @@ public class DriverControl extends NextOpMode {
             }
         }
 
-        if(gamepad2.dpadDownWasPressed() && armDown == false){
+        if(choosePad.dpadDownWasPressed() && !armDown){
             armDown = true;
-        } else if (gamepad2.dpadUpWasPressed() && armDown == true) {
+        } else if (choosePad.dpadUpWasPressed() && armDown) {
             armDown = false;
         }
         if(armDown){
@@ -91,14 +116,14 @@ public class DriverControl extends NextOpMode {
         }
 
 
-        if(gamepad2.left_bumper){
+        if(choosePad.left_bumper){
             Turret.mode = Turret.TurretTracking.ON;
         }
         else{
             Turret.mode = Turret.TurretTracking.OFF;
         }
 
-        if(gamepad2.yWasPressed()){
+        if(choosePad.yWasPressed()){
             shooterOn =!shooterOn;
         }
 
@@ -114,7 +139,7 @@ public class DriverControl extends NextOpMode {
             shooter = ShooterOnMode.OFF;
         }
 
-        if(gamepad2.left_trigger > 0.5) {
+        if(choosePad.left_trigger > 0.5) {
             switch (shooter) {
                 case ON:
                     Feeder.mode = Feeder.FeederMode.ON;
@@ -128,7 +153,9 @@ public class DriverControl extends NextOpMode {
                     BallBlock.mode = BallBlock.BlockState.BALL_NO;
                     break;
             }
-        }else if (gamepad2.b) {
+            //why is this else if?
+
+        }else if (choosePad == gamepad2 ? choosePad.b : choosePad.a) {
             Intake.mode = Intake.IntakeMode.REVERSE;
             Feeder.mode = Feeder.FeederMode.REVERSE;
         } else{
@@ -140,7 +167,6 @@ public class DriverControl extends NextOpMode {
         robot.turret.getTurretAngle(follower.pose(),redAllience);
 
         follower.update();
-
 
         Telemetry.log("red Allience Boolean", redAllience);
         Telemetry.log("arm toggle", armDown);
