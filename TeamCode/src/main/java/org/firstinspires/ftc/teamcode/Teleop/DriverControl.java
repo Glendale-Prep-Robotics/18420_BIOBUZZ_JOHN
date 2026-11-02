@@ -88,7 +88,6 @@ public class DriverControl extends NextOpMode {
     public void start(){
         Telemetry.addBackend(FtcDashboard.getInstance().getTelemetry());
         follower.setPose(GlobalPose.CurrentPose);
-        robot.drive.startDrive(gamepad1);
     }
     @Override
     public void periodic() {
@@ -165,13 +164,13 @@ public class DriverControl extends NextOpMode {
             BallBlock.mode = BallBlock.BlockState.BALL_NO;
         }
 
-        if(gamepad2.dpadRightWasPressed()){
+        if(choosePad.dpadRightWasPressed()){
 
             GoalPose.blueAudienceX +=2;
             GoalPose.blueRefereeX +=2;
             GoalPose.redaudienceX +=2;
             GoalPose.redRefereeX  +=2;
-        } else if (gamepad2.dpadLeftWasPressed()) {
+        } else if (choosePad.dpadLeftWasPressed()) {
             GoalPose.blueAudienceX -=2;
             GoalPose.blueRefereeX -=2;
             GoalPose.redaudienceX -=2;
