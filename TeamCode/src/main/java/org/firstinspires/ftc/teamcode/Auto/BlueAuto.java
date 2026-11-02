@@ -2,15 +2,16 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import static com.pedropathing.api.Paths.line;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
@@ -25,11 +26,11 @@ import org.firstinspires.ftc.teamcode.Teleop.NextRobot;
 import org.firstinspires.ftc.teamcode.Variables.GlobalPose;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
-import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.robot.opmode.NextAutonomous;
 import dev.nextftc.robot.opmode.NextOpMode;
 
 @NextAutonomous(name = "BLUE_R")
+@Config
 
 public class BlueAuto extends NextOpMode {
     private Follower follower = Constants.create(hardwareMap);
@@ -39,14 +40,14 @@ public class BlueAuto extends NextOpMode {
         super(robot);
         this.robot = robot;
     }
+    public static double spinUpTime = 50;
+    public static double shootDelayTime = 500;
 
     public static double HeadingR = 90;
     public static double HeadingA = 270;
 
     public static int fieldLengthXY = 144;
 
-    public static double ballNo = 0.6;
-    public static double ballGo = 0.4;
 
 
 
@@ -143,17 +144,23 @@ public class BlueAuto extends NextOpMode {
     public Command autoRoutine() {
         return sequential(
                 enableShoot(),
+                waitMs(spinUpTime),
+                shoot(),
+                waitMs(shootDelayTime),
                 follow(follower, getStartGoFirstShootA()), shoot(),
+                waitMs(shootDelayTime),
                 intake(),
                 follow(follower, getFirstShootAGoGrabGarden()),
                 intakeNo(),
                 follow(follower, getGrabGardenGoFirstTransition()),
                 follow(follower, getFirstTransitionGoSecondTransition()),
                 follow(follower, getSecondTransitionGoSecondShootR()), shoot(),
+                waitMs(shootDelayTime),
                 intakeToFlower(),
                 follow(follower, getSecondShootRGoGrabFlower()),
                 intakeNo(),
                 follow(follower, getGrabFlowerGoSecondShootR()), shoot(),
+                waitMs(shootDelayTime),
                 follow(follower, getSecondShootRGoEnd())
 
         );

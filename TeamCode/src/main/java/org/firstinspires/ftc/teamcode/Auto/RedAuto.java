@@ -2,14 +2,12 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import static com.pedropathing.api.Paths.line;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
-import com.pedropathing.ivy.CommandBuilder;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
@@ -24,19 +22,20 @@ import org.firstinspires.ftc.teamcode.Mechanisms.BallBlock;
 import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
+import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 import org.firstinspires.ftc.teamcode.Teleop.NextRobot;
 import org.firstinspires.ftc.teamcode.Variables.GlobalPose;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
-import org.opencv.features2d.Feature2D;
 
-import dev.nextftc.hardware.actuators.NextMotor;
+import dev.nextftc.robot.Telemetry;
 import dev.nextftc.robot.opmode.NextAutonomous;
 import dev.nextftc.robot.opmode.NextOpMode;
 
+@Config
 @NextAutonomous(name = "RED_A")
 public class RedAuto extends NextOpMode {
-    private final NextRobot robot;
+    private NextRobot robot;
 
     public RedAuto(NextRobot robot) {
         super(robot);
@@ -48,6 +47,12 @@ public class RedAuto extends NextOpMode {
     public static double HeadingR = 90;
     public static double HeadingA = 270;
 
+
+    public static double spinUpTime = 1000;
+    public static double delayShootTime = 500;
+    public static double turretTurnTime = 1000;
+    public static double grabBallTime = 700;
+
   
 
     public static double ballNo = 0.6;
@@ -58,7 +63,7 @@ public class RedAuto extends NextOpMode {
     private final Pose grabGarden = new Pose(6,9,Math.toRadians(270));
     private final Pose firstTransition = new Pose(36,42,Math.toRadians(270));
     private final Pose secondTransition = new Pose(36,118,Math.toRadians(90));
-    private final Pose secondShootR = new Pose(59,118,Math.toRadians(90));
+    private final Pose secondShootR = new Pose(59,118,Math.toRadians(0));
     private final Pose grabFlower = new Pose(47,133,Math.toRadians(90));
     private final Pose endPose = new Pose(15,115,Math.toRadians(90));
 
@@ -92,13 +97,21 @@ public class RedAuto extends NextOpMode {
 
     public Command enableShoot(){
         return parallel(
-                instant(()-> Turret.mode = Turret.TurretTracking.ON),
                 instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
-                instant(()-> Hood.mode = Hood.HoodState.SHOOT)
+                instant(()-> Shooter.mode = Shooter.ShooterMode.ON),
+                instant(()->Hood.mode = Hood.HoodState.SHOOT)
+        );
+    }
+    public Command disableShoot() {
+        return parallel(
+                instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
+                instant(()-> Shooter.mode = Shooter.ShooterMode.OFF),
+                instant(()-> Intake.mode =  Intake.IntakeMode.OFF),
+                instant(()-> Feeder.mode = Feeder.FeederMode.OFF)
         );
     }
     public Command shoot(){
-        return sequential(
+        return parallel(
                 //new FollowPath(path),
                 instant(()-> Intake.mode = Intake.IntakeMode.ON),
                 instant(()-> Feeder.mode = Feeder.FeederMode.ON),
@@ -110,7 +123,7 @@ public class RedAuto extends NextOpMode {
         return parallel(
           instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
           instant(()-> Intake.mode = Intake.IntakeMode.ON),
-          instant(()-> Feeder.mode = Feeder.FeederMode.ON)
+          instant(()-> Feeder.mode = Feeder.FeederMode.INTAKE)
         );
     }
     public Command intakeNo(){
@@ -137,24 +150,32 @@ public class RedAuto extends NextOpMode {
         );
     }
     public Command autoRoutine() {
-        return sequential(
-                enableShoot(),
-                waitMs(500),
-                shoot(),
-                follow(follower, getStartGoFirstShootA()), shoot(),
-                intake(),
-                follow(follower, getFirstShootAGoGrabGarden()),
-                intakeNo(),
-                follow(follower, getGrabGardenGoFirstTransition()),
-                follow(follower, getFirstTransitionGoSecondTransition()),
-                follow(follower, getSecondTransitionGoSecondShootR()), shoot(),
-                intakeToFlower(),
-                follow(follower, getSecondShootRGoGrabFlower()),
-                intakeNo(),
-                follow(follower, getGrabFlowerGoSecondShootR()), shoot(),
-                follow(follower, getSecondShootRGoEnd())
+        return parallel(
+                instant(()->Turret.mode = Turret.TurretTracking.ON),
+                sequential(
+                    enableShoot(),
+                    waitMs(spinUpTime),
+                    shoot(),
+                    waitMs(delayShootTime),
+                    follow(follower, getStartGoFirstShootA()),
+                    waitMs(delayShootTime),
+                    intake(),
+                    follow(follower, getFirstShootAGoGrabGarden()),
+                    waitMs(grabBallTime),
+                    follow(follower, getGrabGardenGoFirstTransition()),
+                    intakeNo(),
+                    follow(follower, getFirstTransitionGoSecondTransition()),
+                    follow(follower, getSecondTransitionGoSecondShootR()), waitMs(turretTurnTime), shoot(),
+                    waitMs(delayShootTime),
+                    intakeToFlower(),
+                    follow(follower, getSecondShootRGoGrabFlower()),
+                    intakeNo(),
+                    follow(follower, getGrabFlowerGoSecondShootR()), shoot(),
+                    waitMs(delayShootTime),
+                    follow(follower, getSecondShootRGoEnd()),
+                        disableShoot()
 
-        );
+        ));
 
     }
 
@@ -169,6 +190,7 @@ public class RedAuto extends NextOpMode {
         Scheduler.reset();
         follower.setPose(startPose);
         follower.update();
+        GlobalPose.redAllience = true;
 
 
     }
@@ -181,6 +203,11 @@ public class RedAuto extends NextOpMode {
     public void periodic() {//loop
         follower.update();
         Scheduler.execute();
+        robot.turret.getTurretAngle(follower.pose(), GlobalPose.redAllience);
+
+        Telemetry.log("current Pose", follower.pose());
+        Telemetry.log("current turret Angle", robot.turret.turretAngle);
+
 
     }
 

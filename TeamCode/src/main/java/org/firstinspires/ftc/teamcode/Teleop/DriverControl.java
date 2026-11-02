@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.BallBlock;
+import org.firstinspires.ftc.teamcode.Mechanisms.Brake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
@@ -47,6 +48,8 @@ public class DriverControl extends NextOpMode {
     public boolean armDown = false;
 
     public boolean shooterOn = false;
+
+    public boolean brakeOn = false;
 
     private Follower follower = Constants.create(hardwareMap);
 
@@ -139,23 +142,17 @@ public class DriverControl extends NextOpMode {
             shooter = ShooterOnMode.OFF;
         }
 
-        if(choosePad.left_trigger > 0.5) {
-            switch (shooter) {
-                case ON:
-                    Feeder.mode = Feeder.FeederMode.ON;
-                    Intake.mode = Intake.IntakeMode.ON;
-                    BallBlock.mode = BallBlock.BlockState.BALL_GO;
-                    break;
-
-                case OFF:
-                    Feeder.mode = Feeder.FeederMode.INTAKE;
-                    Intake.mode = Intake.IntakeMode.ON;
-                    BallBlock.mode = BallBlock.BlockState.BALL_NO;
-                    break;
-            }
-            //why is this else if?
-
-        }else if (choosePad == gamepad2 ? choosePad.b : choosePad.a) {
+        if(choosePad.left_trigger > 0.5 && robot.shooter.ShooterAtVelocity()) {
+            Feeder.mode = Feeder.FeederMode.ON;
+            Intake.mode = Intake.IntakeMode.ON;
+            BallBlock.mode = BallBlock.BlockState.BALL_GO;
+        } else if (choosePad.right_trigger > 0.5) {
+            Feeder.mode = Feeder.FeederMode.INTAKE;
+            Intake.mode = Intake.IntakeMode.ON;
+            BallBlock.mode = BallBlock.BlockState.BALL_NO;
+        }
+        //why is this else if?
+        else if (choosePad == gamepad2 ? choosePad.b : choosePad.a) {
             Intake.mode = Intake.IntakeMode.REVERSE;
             Feeder.mode = Feeder.FeederMode.REVERSE;
         } else{
@@ -177,14 +174,30 @@ public class DriverControl extends NextOpMode {
             GoalPose.redRefereeX  -=2;
         }
 
+        if(gamepad1.xWasPressed()){
+            brakeOn =! brakeOn;
+        }
+
+        if(brakeOn){
+            Brake.mode = Brake.BrakeState.BRAKE;
+        }
+        else{
+            Brake.mode = Brake.BrakeState.NO_BREAK;
+        }
+
+        if(Brake.mode == Brake.BrakeState.BRAKE){
+
+        }
+        else{
+            follower.manual(
+                    -gamepad1.left_stick_y,
+                    -gamepad1.left_stick_x,
+                    -gamepad1.right_stick_x
+            );
+
+        }
+
         robot.turret.getTurretAngle(follower.pose(),redAllience);
-
-        follower.manual(
-                -gamepad1.left_stick_y,
-                -gamepad1.left_stick_x,
-                -gamepad1.right_stick_x
-        );
-
         follower.update();
 
         Telemetry.log("red Allience Boolean", redAllience);

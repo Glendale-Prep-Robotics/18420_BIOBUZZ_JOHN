@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.Teleop;
-;
+
 
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.BallBlock;
+import org.firstinspires.ftc.teamcode.Mechanisms.Brake;
 import org.firstinspires.ftc.teamcode.Mechanisms.DriveTrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
@@ -19,23 +20,25 @@ import dev.nextftc.robot.Mechanism;
 @Config
 public class NextRobot implements dev.nextftc.robot.NextRobot {
       Shooter shooter = new Shooter();
-      Turret turret = new Turret();
+      public Turret turret = new Turret();
 
-      Intake intake = new Intake();
+      public Intake intake = new Intake();
 
-      Feeder feeder = new Feeder();
+      public Feeder feeder = new Feeder();
 
-      Hood hood = new Hood();
+      public Hood hood = new Hood();
 
-    BallBlock ballBlock = new BallBlock();
+    public BallBlock ballBlock = new BallBlock();
 
     public DriveTrain drive = new DriveTrain();
 
-    Arm arm = new Arm();
+    public Arm arm = new Arm();
+
+    public Brake brake = new Brake();
 
     @Override
     public Set<Mechanism> getMechanisms() {
-        return Set.of(intake, feeder, arm, drive, shooter, turret, hood, ballBlock);
+        return Set.of(intake, feeder, arm, drive, shooter, turret, hood, ballBlock, brake);
     }
 }
 //Gabe is good at programming
