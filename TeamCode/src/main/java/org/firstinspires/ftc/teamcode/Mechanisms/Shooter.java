@@ -125,5 +125,15 @@ public class Shooter implements Mechanism {
         motorVelo = velo;
     }
 
+    public boolean ShooterAtVelocity(){
+        double velo = shooterMotor2.getEncoderVelocity().abs(DegreesPerSecond);
+        if(velo > 80000){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
 
 }

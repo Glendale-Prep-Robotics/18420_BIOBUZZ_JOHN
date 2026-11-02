@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 import org.firstinspires.ftc.teamcode.Teleop.NextRobot;
+import org.firstinspires.ftc.teamcode.Variables.GlobalPose;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 import dev.nextftc.hardware.actuators.NextMotor;
@@ -183,6 +184,12 @@ public class BlueAuto extends NextOpMode {
         follower.update();
         Scheduler.execute();
 
+    }
+
+    @Override
+    public void end(){
+        GlobalPose.CurrentPose = follower.pose();
+        GlobalPose.redAllience = false;
     }
 
 }

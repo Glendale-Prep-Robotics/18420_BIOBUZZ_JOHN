@@ -29,7 +29,7 @@ public class NextRobot implements dev.nextftc.robot.NextRobot {
 
     BallBlock ballBlock = new BallBlock();
 
-    DriveTrain drive = new DriveTrain();
+    public DriveTrain drive = new DriveTrain();
 
     Arm arm = new Arm();
 

@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 import org.firstinspires.ftc.teamcode.Variables.GlobalPose;
+import org.firstinspires.ftc.teamcode.Variables.GoalPose;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 import dev.nextftc.robot.Telemetry;
@@ -64,7 +65,6 @@ public class DriverControl extends NextOpMode {
     public void start(){
         Telemetry.addBackend(FtcDashboard.getInstance().getTelemetry());
         follower.setPose(GlobalPose.CurrentPose);
-        robot.drive.startDrive(gamepad1);
     }
     @Override
     public void periodic() {
@@ -114,21 +114,16 @@ public class DriverControl extends NextOpMode {
             shooter = ShooterOnMode.OFF;
         }
 
-        if(gamepad2.left_trigger > 0.5) {
-            switch (shooter) {
-                case ON:
-                    Feeder.mode = Feeder.FeederMode.ON;
-                    Intake.mode = Intake.IntakeMode.ON;
-                    BallBlock.mode = BallBlock.BlockState.BALL_GO;
-                    break;
-
-                case OFF:
-                    Feeder.mode = Feeder.FeederMode.INTAKE;
-                    Intake.mode = Intake.IntakeMode.ON;
-                    BallBlock.mode = BallBlock.BlockState.BALL_NO;
-                    break;
-            }
-        }else if (gamepad2.b) {
+        if(gamepad2.left_trigger > 0.5 && robot.shooter.ShooterAtVelocity()) {
+                Feeder.mode = Feeder.FeederMode.ON;
+                Intake.mode = Intake.IntakeMode.ON;
+                BallBlock.mode = BallBlock.BlockState.BALL_GO;
+        } else if (gamepad2.right_trigger > 0.5) {
+            Feeder.mode = Feeder.FeederMode.INTAKE;
+            Intake.mode = Intake.IntakeMode.ON;
+            BallBlock.mode = BallBlock.BlockState.BALL_NO;
+        }
+        else if (gamepad2.b) {
             Intake.mode = Intake.IntakeMode.REVERSE;
             Feeder.mode = Feeder.FeederMode.REVERSE;
         } else{
@@ -137,7 +132,26 @@ public class DriverControl extends NextOpMode {
             BallBlock.mode = BallBlock.BlockState.BALL_NO;
         }
 
+        if(gamepad2.dpadRightWasPressed()){
+
+            GoalPose.blueAudienceX +=2;
+            GoalPose.blueRefereeX +=2;
+            GoalPose.redaudienceX +=2;
+            GoalPose.redRefereeX  +=2;
+        } else if (gamepad2.dpadLeftWasPressed()) {
+            GoalPose.blueAudienceX -=2;
+            GoalPose.blueRefereeX -=2;
+            GoalPose.redaudienceX -=2;
+            GoalPose.redRefereeX  -=2;
+        }
+
         robot.turret.getTurretAngle(follower.pose(),redAllience);
+
+        follower.manual(
+                -gamepad1.left_stick_y,
+                -gamepad1.left_stick_x,
+                -gamepad1.right_stick_x
+        );
 
         follower.update();
 

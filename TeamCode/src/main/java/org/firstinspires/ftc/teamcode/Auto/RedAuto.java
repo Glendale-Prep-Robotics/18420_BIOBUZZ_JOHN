@@ -11,6 +11,7 @@ import com.pedropathing.ivy.CommandBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 import static com.pedropathing.ivy.Scheduler.schedule;
@@ -138,6 +139,8 @@ public class RedAuto extends NextOpMode {
     public Command autoRoutine() {
         return sequential(
                 enableShoot(),
+                waitMs(500),
+                shoot(),
                 follow(follower, getStartGoFirstShootA()), shoot(),
                 intake(),
                 follow(follower, getFirstShootAGoGrabGarden()),
