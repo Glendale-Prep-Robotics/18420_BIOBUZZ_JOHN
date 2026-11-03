@@ -19,7 +19,8 @@ import dev.nextftc.robot.Mechanism;
 
 @Config
 public class NextRobot implements dev.nextftc.robot.NextRobot {
-      Shooter shooter = new Shooter();
+      public Shooter shooter = new Shooter();
+
       public Turret turret = new Turret();
 
       public Intake intake = new Intake();

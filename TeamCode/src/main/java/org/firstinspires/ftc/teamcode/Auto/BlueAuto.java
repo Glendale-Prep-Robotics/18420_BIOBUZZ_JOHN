@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.BallBlock;
 import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
+import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 import org.firstinspires.ftc.teamcode.Teleop.NextRobot;
 import org.firstinspires.ftc.teamcode.Variables.GlobalPose;
@@ -41,7 +42,9 @@ public class BlueAuto extends NextOpMode {
         this.robot = robot;
     }
     public static double spinUpTime = 50;
-    public static double shootDelayTime = 500;
+    public static double delayShootTime = 500;
+    public static double turretTurnTime = 1000;
+    public static double grabBallTime = 700;
 
     public static double HeadingR = 90;
     public static double HeadingA = 270;
@@ -90,14 +93,23 @@ public class BlueAuto extends NextOpMode {
 
     public Command enableShoot(){
         return parallel(
-                instant(()-> Turret.mode = Turret.TurretTracking.ON),
                 instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
-                instant(()-> Hood.mode = Hood.HoodState.SHOOT)
+                instant(()-> Shooter.mode = Shooter.ShooterMode.ON),
+                instant(()->Hood.mode = Hood.HoodState.SHOOT)
         );
     }
+
+    public Command disableShoot() {
+        return parallel(
+                instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
+                instant(()-> Shooter.mode = Shooter.ShooterMode.OFF),
+                instant(()-> Intake.mode =  Intake.IntakeMode.OFF),
+                instant(()-> Feeder.mode = Feeder.FeederMode.OFF)
+        );
+    }
+
     public Command shoot(){
-        return sequential(
-                //new FollowPath(path),
+        return parallel(
                 instant(()-> Intake.mode = Intake.IntakeMode.ON),
                 instant(()-> Feeder.mode = Feeder.FeederMode.ON),
                 instant(()-> BallBlock.mode =BallBlock.BlockState.BALL_GO)
@@ -108,9 +120,10 @@ public class BlueAuto extends NextOpMode {
         return parallel(
                 instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
                 instant(()-> Intake.mode = Intake.IntakeMode.ON),
-                instant(()-> Feeder.mode = Feeder.FeederMode.ON)
+                instant(()-> Feeder.mode = Feeder.FeederMode.INTAKE)
         );
     }
+
     public Command intakeNo(){
         return parallel(
                 instant(()-> Feeder.mode = Feeder.FeederMode.OFF),
@@ -134,34 +147,31 @@ public class BlueAuto extends NextOpMode {
                 instant(()-> Intake.mode = Intake.IntakeMode.ON)
         );
     }
-    public Command go(){
-        return sequential(
 
 
-
-        );
-    }
     public Command autoRoutine() {
-        return sequential(
+        return parallel(
                 enableShoot(),
                 waitMs(spinUpTime),
                 shoot(),
-                waitMs(shootDelayTime),
-                follow(follower, getStartGoFirstShootA()), shoot(),
-                waitMs(shootDelayTime),
+                waitMs(delayShootTime),
+                follow(follower, getStartGoFirstShootA()),
+                waitMs(delayShootTime),
                 intake(),
                 follow(follower, getFirstShootAGoGrabGarden()),
-                intakeNo(),
+                waitMs(grabBallTime),
                 follow(follower, getGrabGardenGoFirstTransition()),
+                intakeNo(),
                 follow(follower, getFirstTransitionGoSecondTransition()),
-                follow(follower, getSecondTransitionGoSecondShootR()), shoot(),
-                waitMs(shootDelayTime),
+                follow(follower, getSecondTransitionGoSecondShootR()), waitMs(turretTurnTime), shoot(),
+                waitMs(delayShootTime),
                 intakeToFlower(),
                 follow(follower, getSecondShootRGoGrabFlower()),
                 intakeNo(),
                 follow(follower, getGrabFlowerGoSecondShootR()), shoot(),
-                waitMs(shootDelayTime),
-                follow(follower, getSecondShootRGoEnd())
+                waitMs(delayShootTime),
+                follow(follower, getSecondShootRGoEnd()),
+                    disableShoot()
 
         );
 
