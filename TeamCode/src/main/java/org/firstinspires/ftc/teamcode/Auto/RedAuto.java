@@ -44,29 +44,23 @@ public class RedAuto extends NextOpMode {
 
     //public static Follower follower = Constants.create(HardwareMap);
     private Follower follower = Constants.create(hardwareMap);
-    public static double HeadingR = 90;
-    public static double HeadingA = 270;
-
 
     public static double spinUpTime = 1000;
     public static double delayShootTime = 500;
     public static double turretTurnTime = 1000;
     public static double grabBallTime = 700;
+    public static double turnTime = 1000;
 
-  
-
-    public static double ballNo = 0.6;
-    public static double ballGo = 0.4;
-
-    private final Pose startPose = new Pose(55,8,Math.toRadians(270));
+    private final Pose startPose = new Pose(55,8,Math.toRadians(90));
     private final Pose firstShootA = new Pose(55,32,Math.toRadians(270));
-    private final Pose grabGarden = new Pose(6,9,Math.toRadians(270));
-    private final Pose firstTransition = new Pose(36,42,Math.toRadians(270));
+    private final Pose grabGarden = new Pose(3,11,Math.toRadians(270));
+    private final Pose firstTransition = new Pose(35,42,Math.toRadians(270));
     private final Pose secondTransition = new Pose(36,118,Math.toRadians(90));
     private final Pose secondShootR = new Pose(59,118,Math.toRadians(0));
-    private final Pose grabFlower = new Pose(47,133,Math.toRadians(90));
+    private final Pose grabFlower = new Pose(50,129,Math.toRadians(90));
     private final Pose endPose = new Pose(15,115,Math.toRadians(90));
 
+    private final Pose newSecondShootR = new Pose(55,144-8,Math.toRadians(0));
 
     private Path getStartGoFirstShootA() {
         return line(startPose, firstShootA).linear(startPose, firstShootA);
@@ -83,6 +77,9 @@ public class RedAuto extends NextOpMode {
     private Path getSecondTransitionGoSecondShootR(){
         return line(secondTransition, secondShootR).linear(secondTransition, secondShootR);
     }
+    private Path secondShootRGoNewSecondShootR(){
+        return line(secondShootR,newSecondShootR).constant(secondShootR);
+    }
     private Path getSecondShootRGoGrabFlower(){
         return line(secondShootR, grabFlower).linear(secondShootR, grabFlower);
     }
@@ -91,6 +88,12 @@ public class RedAuto extends NextOpMode {
     }
     private Path getSecondShootRGoEnd(){
         return line(secondShootR, endPose).linear(secondShootR, endPose);
+    }
+    private Path testSecondShootRGoSecondTransition() {
+        return line(secondShootR,secondTransition).linear(secondShootR,grabFlower);
+    }
+    private Path testSecondTransitionGoGrabFlower() {
+        return line(secondTransition,grabFlower).constant(grabFlower);
     }
 
 
@@ -167,7 +170,11 @@ public class RedAuto extends NextOpMode {
                     follow(follower, getFirstTransitionGoSecondTransition()),
                     follow(follower, getSecondTransitionGoSecondShootR()), waitMs(turretTurnTime), shoot(),
                     waitMs(delayShootTime),
+                    follow(follower, testSecondShootRGoSecondTransition()),
                     intakeToFlower(),
+                    waitMs(1000),
+                    follow(follower, testSecondTransitionGoGrabFlower()),
+                    waitMs(turnTime),
                     follow(follower, getSecondShootRGoGrabFlower()),
                     intakeNo(),
                     follow(follower, getGrabFlowerGoSecondShootR()), shoot(),

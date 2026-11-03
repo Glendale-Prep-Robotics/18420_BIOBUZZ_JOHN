@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.BallBlock;
@@ -29,10 +30,11 @@ import dev.nextftc.robot.triggers.CommandGamepad;
 @NextTeleop(name = "DriverControl")
 public class DriverControl extends NextOpMode {
     private final NextRobot robot;
-
+    private final ElapsedTime matchTime = new ElapsedTime();
     public DriverControl(NextRobot robot) {
         super(robot);
         this.robot = robot;
+        matchTime.reset();
     }
 
     CommandGamepad gp1 = new CommandGamepad(gamepad1);
@@ -51,6 +53,7 @@ public class DriverControl extends NextOpMode {
 
     public boolean brakeOn = false;
 
+
     private Follower follower = Constants.create(hardwareMap);
 
     public enum ShooterOnMode{
@@ -62,6 +65,14 @@ public class DriverControl extends NextOpMode {
 
     @Override
     public void disabledPeriodic() {
+
+        double initSeconds = matchTime.seconds();
+
+        if(Math.floor(initSeconds) % 2 == 0) {
+            Telemetry.log("Hi i am BOB :)");
+        } else {
+            Telemetry.log("Hi i am BOB :D");
+        }
         if(gamepad1.dpadUpWasPressed()){
             redAllience  = false;
         }
@@ -200,7 +211,6 @@ public class DriverControl extends NextOpMode {
         robot.turret.getTurretAngle(follower.pose(),redAllience);
         follower.update();
 
-        Telemetry.log("red Allience Boolean", redAllience);
         Telemetry.log("arm toggle", armDown);
         Telemetry.log("arm State", Arm.mode);
        Telemetry.log("Arm Position", Arm.servoPosition);
