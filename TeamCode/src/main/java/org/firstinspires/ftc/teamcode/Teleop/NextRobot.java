@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.DriveTrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
+import org.firstinspires.ftc.teamcode.Mechanisms.Sensor;
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 
@@ -33,9 +34,11 @@ public class NextRobot implements dev.nextftc.robot.NextRobot {
 
     Arm arm = new Arm();
 
+    public Sensor sensor = new Sensor();
+
     @Override
     public Set<Mechanism> getMechanisms() {
-        return Set.of(intake, feeder, arm, drive, shooter, turret, hood, ballBlock);
+        return Set.of(intake, feeder, arm, drive, shooter, turret, hood, ballBlock, sensor);
     }
 }
 //Gabe is good at programming
