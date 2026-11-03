@@ -16,7 +16,7 @@ public class Intake implements Mechanism {
     public static double val;
 
     public enum IntakeMode{
-        ON, OFF, INIT
+        ON, OFF, INIT, REVERSE
     }
 
     public static IntakeMode mode = IntakeMode.INIT;
@@ -35,6 +35,9 @@ public class Intake implements Mechanism {
 
             case INIT:
                 break;
+
+            case REVERSE:
+                val = -intakeThrottle;
         }
 
         intakeMotor1.setDirection(NextMotor.Direction.REVERSE);

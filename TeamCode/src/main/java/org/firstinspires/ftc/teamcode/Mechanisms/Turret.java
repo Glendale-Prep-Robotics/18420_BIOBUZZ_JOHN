@@ -1,29 +1,36 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.Variables.GoalPose.blueAudienceGoal;
 import static org.firstinspires.ftc.teamcode.Variables.GoalPose.blueRefereeGoal;
 import static org.firstinspires.ftc.teamcode.Variables.GoalPose.redAudienceGoal;
 import static org.firstinspires.ftc.teamcode.Variables.GoalPose.redRefereeGoal;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
+import com.pedropathing.utils.Angle;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.opencv.core.Mat;
 
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.hardware.actuators.NextServo;
 import dev.nextftc.robot.Mechanism;
+import dev.nextftc.robot.Telemetry;
 
 @Config
 public class Turret implements Mechanism {
     public enum TurretTracking{
-        ON, OFF, INIT
+        ON, OFF, INIT, ALL
     }
     public static TurretTracking mode = TurretTracking.INIT;
 
-    public static double turretAngle;
-    public static double noAngle = 0.5;
-    public static double trackingAngle;
+    public double turretAngle;
+    public double trackingAngle;
 
-    public static double DEGREES_PER_TICK = 0.00281;
+    public static double DEGREES_PER_TICK = 1./320;
 
 
     NextServo turretServo1 = new NextServo("ts1");
@@ -33,11 +40,11 @@ public class Turret implements Mechanism {
     public void periodic(){
         switch (mode){
             case ON:
-                turretAngle = 1;
+                turretAngle = trackingAngle;
                 break;
 
             case OFF:
-                turretAngle = noAngle;
+                turretAngle = 0.5;
                 break;
 
             case INIT:
@@ -47,8 +54,14 @@ public class Turret implements Mechanism {
         turretServo1.setDirection(NextMotor.Direction.FORWARD);
         turretServo2.setDirection(NextMotor.Direction.FORWARD);
 
+        turretAngle = Range.clip(turretAngle, 0,1);
+
         turretServo1.setPosition(turretAngle);
         turretServo2.setPosition(turretAngle);
+
+        Telemetry.log("turretServo1 position", turretServo1.getPosition());
+        Telemetry.log("turretServo2 position", turretServo2.getPosition());
+
     }
 
     public void getTurretAngle(Pose robotPose, boolean redAllience){
@@ -81,9 +94,20 @@ public class Turret implements Mechanism {
         double distance = Math.sqrt((xVal*xVal)+(yVal*yVal));
         double angle = Math.atan2(yVal,xVal);
 
-        double trueAngle = robotHeading + angle;
+        double trueAngle = Angle.normalizeSigned(robotHeading - angle);
+//        if (trueAngle > 360){
+//            trueAngle -= 360;
+//        } else if (trueAngle < -360) {
+//            trueAngle +=360;
+//        }
 
-        trackingAngle = (trueAngle*DEGREES_PER_TICK) +0.5;
+        double trueAngleDegrees = Math.toDegrees(trueAngle);
+
+        trackingAngle = (trueAngleDegrees*DEGREES_PER_TICK) +0.5;
+
+        Telemetry.log("target Angle", trueAngle);
+        Telemetry.log("robo heading", Math.toDegrees(robotHeading));
+        Telemetry.log("calculated angle", Math.toDegrees(angle));
 
 
 

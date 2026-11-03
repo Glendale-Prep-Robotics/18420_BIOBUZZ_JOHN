@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.Mechanisms.DriveTrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
-import org.firstinspires.ftc.teamcode.Mechanisms.Sensor;
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 
@@ -19,25 +18,29 @@ import dev.nextftc.robot.Mechanism;
 
 @Config
 public class NextRobot implements dev.nextftc.robot.NextRobot {
-      Shooter shooter = new Shooter();
-      Turret turret = new Turret();
+      public Shooter shooter = new Shooter();
 
-      Intake intake = new Intake();
+      public Turret turret = new Turret();
 
-      Feeder feeder = new Feeder();
+      public Intake intake = new Intake();
 
-      Hood hood = new Hood();
+      public Feeder feeder = new Feeder();
 
-    BallBlock ballBlock = new BallBlock();
+      public Hood hood = new Hood();
 
-    DriveTrain drive = new DriveTrain();
+    public BallBlock ballBlock = new BallBlock();
 
-    Arm arm = new Arm();
+    public DriveTrain drive = new DriveTrain();
+
+    public Arm arm = new Arm();
+
+    public Brake brake = new Brake();
 
     public Sensor sensor = new Sensor();
 
     @Override
     public Set<Mechanism> getMechanisms() {
+        return Set.of(intake, feeder, arm, drive, shooter, turret, hood, ballBlock, brake);
         return Set.of(intake, feeder, arm, drive, shooter, turret, hood, ballBlock, sensor);
     }
 }

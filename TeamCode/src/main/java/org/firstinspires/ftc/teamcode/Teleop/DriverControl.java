@@ -1,16 +1,24 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
 
+import static org.firstinspires.ftc.teamcode.Variables.GlobalPose.redAllience;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.follower.Follower;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.BallBlock;
+import org.firstinspires.ftc.teamcode.Mechanisms.Brake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
+import org.firstinspires.ftc.teamcode.Variables.GlobalPose;
+import org.firstinspires.ftc.teamcode.Variables.GoalPose;
+import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 import dev.nextftc.robot.Telemetry;
 import dev.nextftc.robot.opmode.NextOpMode;
@@ -30,30 +38,79 @@ public class DriverControl extends NextOpMode {
     CommandGamepad gp1 = new CommandGamepad(gamepad1);
     CommandGamepad gp2 = new CommandGamepad(gamepad2);
 
+    public enum PlayerAmount {
+        TWO_PLAYERS,
+        ONE_PLAYERS
+    }
+    PlayerAmount playerAmount = PlayerAmount.TWO_PLAYERS;
+    Gamepad choosePad;
+
     public boolean armDown = false;
 
-    public boolean turretTrack = false;
+    public boolean shooterOn = false;
 
-    public boolean hoodOpen = false;
+    public boolean brakeOn = false;
+
+    private Follower follower = Constants.create(hardwareMap);
+
+    public enum ShooterOnMode{
+        ON, OFF
+    }
+
+    public ShooterOnMode shooter = ShooterOnMode.OFF;
 
 
     @Override
     public void disabledPeriodic() {
+        if(gamepad1.dpadUpWasPressed()){
+            redAllience  = false;
+        }
+        if(gamepad1.dpadDownWasPressed()){
+            redAllience = true;
+        }
+        // Little enum that changes amount of players
+        if(gamepad1.dpadLeftWasPressed() || gamepad1.dpadRightWasPressed())  {
+            if(playerAmount == PlayerAmount.TWO_PLAYERS) {
+                playerAmount = PlayerAmount.ONE_PLAYERS;
+            } else {
+                playerAmount = PlayerAmount.TWO_PLAYERS;
+            }
+        }
 
+        String colorMessage = redAllience ? "YOU ON RED!!!" : "YOU ON BLUE!!!";
+        Telemetry.log(colorMessage);
+
+        //YO YO YO MY GABE MAN YOU CAN CHANGE IF YOU WANT
+        //Telemetry.log("red alliance boolean", redAllience);
+
+        Telemetry.log("Player Amount:",playerAmount);
+        choosePad = playerAmount == PlayerAmount.TWO_PLAYERS ? gamepad2 : gamepad1;
     }
 
     @Override
     public void start(){
         Telemetry.addBackend(FtcDashboard.getInstance().getTelemetry());
-        robot.drive.startDrive(gamepad1);
+        follower.setPose(GlobalPose.CurrentPose);
     }
     @Override
     public void periodic() {
 
-        if(gamepad1.aWasPressed()){
-            armDown =!armDown;
+        /// CHOOSEPAD IS NORMALLY GAMEPAD2
+
+        if(gamepad1.bWasPressed()){
+            if (redAllience){
+                follower.setPose(GlobalPose.redZeroPose);
+            }
+            else{
+                follower.setPose(GlobalPose.blueZeroPose);
+            }
         }
 
+        if(choosePad.dpadDownWasPressed() && !armDown){
+            armDown = true;
+        } else if (choosePad.dpadUpWasPressed() && armDown) {
+            armDown = false;
+        }
         if(armDown){
             Arm.mode = Arm.FlowerPiviotState.DOWN;
         }
@@ -62,60 +119,96 @@ public class DriverControl extends NextOpMode {
         }
 
 
-
-        if(gamepad1.bWasPressed()){
-            turretTrack =! turretTrack;
-        }
-
-        if(turretTrack){
+        if(choosePad.left_bumper){
             Turret.mode = Turret.TurretTracking.ON;
         }
-       else{
+        else{
             Turret.mode = Turret.TurretTracking.OFF;
         }
 
-        if(gamepad1.xWasPressed()){
-            hoodOpen =!hoodOpen;
+        if(choosePad.yWasPressed()){
+            shooterOn =!shooterOn;
         }
 
-        if(hoodOpen){
-            Hood.mode = Hood.HoodState.SHOOT;
-        }
-       else{
-            Hood.mode = Hood.HoodState.CLOSE;
-        }
-
-        if(gamepad1.left_trigger > 0.5){
+        if(shooterOn){
             Shooter.mode = Shooter.ShooterMode.ON;
+            Hood.mode = Hood.HoodState.SHOOT;
+            shooter = ShooterOnMode.ON;
 
         }
        else{
             Shooter.mode = Shooter.ShooterMode.OFF;
+            Hood.mode = Hood.HoodState.CLOSE;
+            shooter = ShooterOnMode.OFF;
         }
 
-        if(gamepad1.left_bumper && !gamepad1.right_bumper){
+        if(choosePad.left_trigger > 0.5 && robot.shooter.ShooterAtVelocity()) {
             Feeder.mode = Feeder.FeederMode.ON;
             Intake.mode = Intake.IntakeMode.ON;
             BallBlock.mode = BallBlock.BlockState.BALL_GO;
-        } else if (gamepad1.right_bumper) {
+        } else if (choosePad.right_trigger > 0.5) {
             Feeder.mode = Feeder.FeederMode.INTAKE;
             Intake.mode = Intake.IntakeMode.ON;
             BallBlock.mode = BallBlock.BlockState.BALL_NO;
-        }else{
+        }
+        //why is this else if?
+        else if (choosePad == gamepad2 ? choosePad.b : choosePad.a) {
+            Intake.mode = Intake.IntakeMode.REVERSE;
+            Feeder.mode = Feeder.FeederMode.REVERSE;
+        } else{
             Feeder.mode = Feeder.FeederMode.OFF;
             Intake.mode = Intake.IntakeMode.OFF;
             BallBlock.mode = BallBlock.BlockState.BALL_NO;
         }
+
+        if(choosePad.dpadRightWasPressed()){
+
+            GoalPose.blueAudienceX +=2;
+            GoalPose.blueRefereeX +=2;
+            GoalPose.redaudienceX +=2;
+            GoalPose.redRefereeX  +=2;
+        } else if (choosePad.dpadLeftWasPressed()) {
+            GoalPose.blueAudienceX -=2;
+            GoalPose.blueRefereeX -=2;
+            GoalPose.redaudienceX -=2;
+            GoalPose.redRefereeX  -=2;
+        }
+
+        if(gamepad1.xWasPressed()){
+            brakeOn =! brakeOn;
+        }
+
+        if(brakeOn){
+            Brake.mode = Brake.BrakeState.BRAKE;
+        }
+        else{
+            Brake.mode = Brake.BrakeState.NO_BREAK;
+        }
+
+        if(Brake.mode == Brake.BrakeState.BRAKE){
+
+        }
+        else{
+            follower.manual(
+                    -gamepad1.left_stick_y,
+                    -gamepad1.left_stick_x,
+                    -gamepad1.right_stick_x
+            );
+
+        }
+
+        robot.turret.getTurretAngle(follower.pose(),redAllience);
+        follower.update();
+
+        Telemetry.log("red Allience Boolean", redAllience);
         Telemetry.log("arm toggle", armDown);
         Telemetry.log("arm State", Arm.mode);
        Telemetry.log("Arm Position", Arm.servoPosition);
-       Telemetry.log("TurretState", Turret.mode);
+       Telemetry.log("Turret State", Turret.mode);
        Telemetry.log("ball State", BallBlock.mode);
        Telemetry.log("Hood state", Hood.mode);
        Telemetry.log("Shooter State", Shooter.mode);
-
-       Telemetry.update();
-
+       Telemetry.log("current Pose", follower.pose());
 
     }
 

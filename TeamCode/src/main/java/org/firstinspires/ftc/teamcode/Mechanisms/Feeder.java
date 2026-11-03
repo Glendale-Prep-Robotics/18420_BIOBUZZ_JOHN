@@ -11,14 +11,14 @@ public class Feeder implements Mechanism {
     NextMotor FeederMotor = new NextMotor("fm");
 
     public enum FeederMode{
-        ON,OFF,INIT, INTAKE
+        ON,OFF,INIT, INTAKE, REVERSE
 
     }
 
     public static double FEEDER_ON_SHOOT = 0.7;
 
 
-    public static double FEEDER_ON_INTAKE = 0.2;
+    public static double FEEDER_ON_INTAKE = 0.3;
 
     public static FeederMode mode = FeederMode.INIT;
 
@@ -40,6 +40,10 @@ public class Feeder implements Mechanism {
 
             case INTAKE:
                 val2 = FEEDER_ON_INTAKE;
+                break;
+
+            case REVERSE:
+                val2 = -FEEDER_ON_INTAKE;
         }
 
 
