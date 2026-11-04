@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.Teleop;
-
+;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.DriveTrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
+import org.firstinspires.ftc.teamcode.Mechanisms.Sensor;
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 
@@ -19,7 +20,8 @@ import dev.nextftc.robot.Mechanism;
 
 @Config
 public class NextRobot implements dev.nextftc.robot.NextRobot {
-      Shooter shooter = new Shooter();
+      public Shooter shooter = new Shooter();
+
       public Turret turret = new Turret();
 
       public Intake intake = new Intake();
@@ -35,6 +37,8 @@ public class NextRobot implements dev.nextftc.robot.NextRobot {
     public Arm arm = new Arm();
 
     public Brake brake = new Brake();
+
+    public Sensor sensor = new Sensor();
 
     @Override
     public Set<Mechanism> getMechanisms() {
