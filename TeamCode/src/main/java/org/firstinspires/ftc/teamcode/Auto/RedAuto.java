@@ -42,7 +42,6 @@ public class RedAuto extends NextOpMode {
         this.robot = robot;
     }
 
-    //public static Follower follower = Constants.create(HardwareMap);
     private Follower follower = Constants.create(hardwareMap);
 
     public static double spinUpTime = 1000;
