@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
 
-import static org.firstinspires.ftc.teamcode.Variables.GlobalPose.redAllience;
+import static org.firstinspires.ftc.teamcode.Variables.GlobalPose.redAlliance;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -45,12 +45,11 @@ public class DriverControl extends NextOpMode {
         ONE_PLAYERS
     }
     PlayerAmount playerAmount = PlayerAmount.TWO_PLAYERS;
+    boolean noControls = true;
     Gamepad choosePad;
 
     public boolean armDown = false;
-
     public boolean shooterOn = false;
-
     public boolean brakeOn = false;
 
 
@@ -67,17 +66,13 @@ public class DriverControl extends NextOpMode {
     public void disabledPeriodic() {
 
         double initSeconds = matchTime.seconds();
+        boolean bobMouthMagic = (int) initSeconds % 2 == 0;
 
-        if(Math.floor(initSeconds) % 2 == 0) {
-            Telemetry.log("Hi i am BOB :)");
-        } else {
-            Telemetry.log("Hi i am BOB :D");
-        }
         if(gamepad1.dpadUpWasPressed()){
-            redAllience  = false;
+            redAlliance = false;
         }
         if(gamepad1.dpadDownWasPressed()){
-            redAllience = true;
+            redAlliance = true;
         }
         // Little enum that changes amount of players
         if(gamepad1.dpadLeftWasPressed() || gamepad1.dpadRightWasPressed())  {
@@ -88,14 +83,24 @@ public class DriverControl extends NextOpMode {
             }
         }
 
-        String colorMessage = redAllience ? "YOU ON RED!!!" : "YOU ON BLUE!!!";
-        Telemetry.log(colorMessage);
-
-        //YO YO YO MY GABE MAN YOU CAN CHANGE IF YOU WANT
-        //Telemetry.log("red alliance boolean", redAllience);
-
-        Telemetry.log("Player Amount:",playerAmount);
         choosePad = playerAmount == PlayerAmount.TWO_PLAYERS ? gamepad2 : gamepad1;
+        // I love unreadable code
+        noControls = gamepad1.yWasPressed() != noControls;
+
+        if(noControls) {
+            Telemetry.log(bobMouthMagic ? "Hi i am BOB :)" : "Hi i am BOB :D");
+            Telemetry.log(bobMouthMagic ? "--> Click Y to see controls!" : "->  Click Y to see controls!");
+            Telemetry.log(redAlliance ? "YOU ON RED!!!" : "YOU ON BLUE!!!");
+            Telemetry.log("Player Amount:", playerAmount);
+        } else {
+            Telemetry.log(bobMouthMagic ? "--> Click Y to exit!" : "->  Click Y to exit!");
+            Telemetry.log("     ~--------------------~     ");
+            Telemetry.log("- press B to zero the robot's position -");
+            Telemetry.log("- Dpad down and up to lower and raise the arm -");
+            Telemetry.log("- left bumper to turn on and off turret tracking -");
+            Telemetry.log("- Press Y, while Opmode active, to turn on flywheel -");
+            Telemetry.log("I'll finish this later");
+        }
     }
 
     @Override
@@ -106,10 +111,10 @@ public class DriverControl extends NextOpMode {
     @Override
     public void periodic() {
 
-        /// CHOOSEPAD IS NORMALLY GAMEPAD2
+        /// CHOOSE PAD IS NORMALLY GAMEPAD2
 
         if(gamepad1.bWasPressed()){
-            if (redAllience){
+            if (redAlliance){
                 follower.setPose(GlobalPose.redZeroPose);
             }
             else{
@@ -138,7 +143,7 @@ public class DriverControl extends NextOpMode {
         }
 
         if(choosePad.yWasPressed()){
-            shooterOn =!shooterOn;
+            shooterOn = !shooterOn;
         }
 
         if(shooterOn){
@@ -162,7 +167,6 @@ public class DriverControl extends NextOpMode {
             Intake.mode = Intake.IntakeMode.ON;
             BallBlock.mode = BallBlock.BlockState.BALL_NO;
         }
-        //why is this else if?
         else if (choosePad == gamepad2 ? choosePad.b : choosePad.a) {
             Intake.mode = Intake.IntakeMode.REVERSE;
             Feeder.mode = Feeder.FeederMode.REVERSE;
@@ -195,7 +199,7 @@ public class DriverControl extends NextOpMode {
         else{
             Brake.mode = Brake.BrakeState.NO_BREAK;
         }
-
+        // YO YO YO MY GABE MAN WHAT IS THIS?
         if(Brake.mode == Brake.BrakeState.BRAKE){
 
         }
@@ -208,7 +212,7 @@ public class DriverControl extends NextOpMode {
 
         }
 
-        robot.turret.getTurretAngle(follower.pose(),redAllience);
+        robot.turret.getTurretAngle(follower.pose(), redAlliance);
         follower.update();
 
         Telemetry.log("arm toggle", armDown);

@@ -47,7 +47,7 @@ public class RedAuto extends NextOpMode {
 
     public static double spinUpTime = 1000;
     public static double delayShootTime = 500;
-    public static double turretTurnTime = 1000;
+    public static double turretTurnTime = 500;
     public static double grabBallTime = 700;
     public static double turnTime = 1000;
 
@@ -56,46 +56,48 @@ public class RedAuto extends NextOpMode {
     private final Pose grabGarden = new Pose(3,11,Math.toRadians(270));
     private final Pose firstTransition = new Pose(35,42,Math.toRadians(270));
     private final Pose secondTransition = new Pose(36,118,Math.toRadians(90));
-    private final Pose secondShootR = new Pose(59,118,Math.toRadians(0));
+    private final Pose transitionShootR = new Pose(59,118,Math.toRadians(0));
     private final Pose grabFlower = new Pose(50,129,Math.toRadians(90));
     private final Pose endPose = new Pose(15,115,Math.toRadians(90));
+    private final Pose beforeFlowerGrab = new Pose(50,118,Math.toRadians(90));
+    private final Pose secondShootR = new Pose(55,136,Math.toRadians(0));
 
-    private final Pose newSecondShootR = new Pose(55,144-8,Math.toRadians(0));
-
-    private Path getStartGoFirstShootA() {
+    private Path StartGoFirstShootA() {
         return line(startPose, firstShootA).linear(startPose, firstShootA);
     }
-    private Path getFirstShootAGoGrabGarden(){
+    private Path FirstShootAGoGrabGarden(){
         return line(firstShootA, grabGarden).linear(firstShootA, grabGarden);
     }
-    private Path getGrabGardenGoFirstTransition(){
+    private Path GrabGardenGoFirstTransition(){
         return line(grabGarden, firstTransition).linear(grabGarden,firstTransition);
     }
-    private Path getFirstTransitionGoSecondTransition(){
+    private Path FirstTransitionGoSecondTransition(){
         return line(firstTransition, secondTransition).linear(firstTransition,secondTransition);
     }
-    private Path getSecondTransitionGoSecondShootR(){
-        return line(secondTransition, secondShootR).linear(secondTransition, secondShootR);
+    private Path SecondTransitionGoTransitionShootR(){
+        return line(secondTransition, transitionShootR).linear(secondTransition, transitionShootR);
     }
-    private Path secondShootRGoNewSecondShootR(){
-        return line(secondShootR,newSecondShootR).constant(secondShootR);
+    private Path transitionShootRGoSecondShootR(){
+        return line(transitionShootR, secondShootR).constant(transitionShootR);
     }
-    private Path getSecondShootRGoGrabFlower(){
-        return line(secondShootR, grabFlower).linear(secondShootR, grabFlower);
+    private Path secondShootRGoTransitionShootR() {
+        return line(secondShootR, transitionShootR).linear(secondShootR, transitionShootR);
     }
-    private Path getGrabFlowerGoSecondShootR(){
-        return line(grabFlower, secondShootR).linear(grabFlower, secondShootR);
+    private Path transitionShootRGoBeforeGrabFlower() {
+        return line(transitionShootR,beforeFlowerGrab).linear(transitionShootR,beforeFlowerGrab);
     }
-    private Path getSecondShootRGoEnd(){
-        return line(secondShootR, endPose).linear(secondShootR, endPose);
+    private Path beforeGrabFlowerGoTransitionShootR() {
+        return line(beforeFlowerGrab,transitionShootR).linear(beforeFlowerGrab,transitionShootR);
     }
-    private Path testSecondShootRGoSecondTransition() {
-        return line(secondShootR,secondTransition).linear(secondShootR,grabFlower);
+    private Path beforeGrabFlowerGoGrabFlower() {
+        return line(beforeFlowerGrab,grabFlower).linear(beforeFlowerGrab,grabFlower);
     }
-    private Path testSecondTransitionGoGrabFlower() {
-        return line(secondTransition,grabFlower).constant(grabFlower);
+    private Path GrabFlowerGoBeforeGrabFlower(){
+        return line(grabFlower, beforeFlowerGrab).linear(grabFlower, beforeFlowerGrab);
     }
-
+    private Path transitionShootRGoEnd(){
+        return line(transitionShootR, endPose).linear(transitionShootR, endPose);
+    }
 
 
     public Command enableShoot(){
@@ -160,26 +162,34 @@ public class RedAuto extends NextOpMode {
                     waitMs(spinUpTime),
                     shoot(),
                     waitMs(delayShootTime),
-                    follow(follower, getStartGoFirstShootA()),
+                    follow(follower, StartGoFirstShootA()),
                     waitMs(delayShootTime),
                     intake(),
-                    follow(follower, getFirstShootAGoGrabGarden()),
+                    follow(follower, FirstShootAGoGrabGarden()),
                     waitMs(grabBallTime),
-                    follow(follower, getGrabGardenGoFirstTransition()),
+                    follow(follower, GrabGardenGoFirstTransition()),
                     intakeNo(),
-                    follow(follower, getFirstTransitionGoSecondTransition()),
-                    follow(follower, getSecondTransitionGoSecondShootR()), waitMs(turretTurnTime), shoot(),
-                    waitMs(delayShootTime),
-                    follow(follower, testSecondShootRGoSecondTransition()),
-                    intakeToFlower(),
-                    waitMs(1000),
-                    follow(follower, testSecondTransitionGoGrabFlower()),
-                    waitMs(turnTime),
-                    follow(follower, getSecondShootRGoGrabFlower()),
-                    intakeNo(),
-                    follow(follower, getGrabFlowerGoSecondShootR()), shoot(),
-                    waitMs(delayShootTime),
-                    follow(follower, getSecondShootRGoEnd()),
+                    follow(follower, FirstTransitionGoSecondTransition()),
+                    follow(follower, SecondTransitionGoTransitionShootR()), waitMs(turretTurnTime),
+                    follow(follower, transitionShootRGoSecondShootR()), shoot(), waitMs(delayShootTime),
+                    follow(follower, secondShootRGoTransitionShootR()),
+                    follow(follower, transitionShootRGoBeforeGrabFlower()),
+                    intakeToFlower(), waitMs(500),
+                    follow(follower, beforeGrabFlowerGoGrabFlower()),
+                    follow(follower, GrabFlowerGoBeforeGrabFlower()), intakeNo(),
+                    follow(follower, beforeGrabFlowerGoTransitionShootR()),
+                    follow(follower, transitionShootRGoSecondShootR()), waitMs(turnTime),
+                    shoot(), waitMs(delayShootTime),
+                    follow(follower, secondShootRGoTransitionShootR()),
+                    follow(follower, transitionShootRGoBeforeGrabFlower()),
+                        intakeToFlower(), waitMs(500),
+                        follow(follower, beforeGrabFlowerGoGrabFlower()),
+                        follow(follower, GrabFlowerGoBeforeGrabFlower()), intakeNo(),
+                        follow(follower, beforeGrabFlowerGoTransitionShootR()),
+                        follow(follower, transitionShootRGoSecondShootR()), waitMs(turnTime),
+                        shoot(), waitMs(delayShootTime),
+                        follow(follower, secondShootRGoTransitionShootR()),
+                    follow(follower, transitionShootRGoEnd()),
                         disableShoot()
 
         ));
@@ -197,7 +207,7 @@ public class RedAuto extends NextOpMode {
         Scheduler.reset();
         follower.setPose(startPose);
         follower.update();
-        GlobalPose.redAllience = true;
+        GlobalPose.redAlliance = true;
 
 
     }
@@ -210,7 +220,7 @@ public class RedAuto extends NextOpMode {
     public void periodic() {//loop
         follower.update();
         Scheduler.execute();
-        robot.turret.getTurretAngle(follower.pose(), GlobalPose.redAllience);
+        robot.turret.getTurretAngle(follower.pose(), GlobalPose.redAlliance);
 
         Telemetry.log("current Pose", follower.pose());
         Telemetry.log("current turret Angle", robot.turret.turretAngle);
@@ -221,7 +231,7 @@ public class RedAuto extends NextOpMode {
     @Override
     public void end(){
         GlobalPose.CurrentPose = follower.pose();
-        GlobalPose.redAllience = true;
+        GlobalPose.redAlliance = true;
     }
 
 }

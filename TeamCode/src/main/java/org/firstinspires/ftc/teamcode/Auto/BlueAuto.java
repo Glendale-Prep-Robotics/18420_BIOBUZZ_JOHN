@@ -13,7 +13,6 @@ import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.commands.Commands.instant;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.parallel;
-import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
@@ -22,7 +21,6 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
-import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 import org.firstinspires.ftc.teamcode.Teleop.NextRobot;
 import org.firstinspires.ftc.teamcode.Variables.GlobalPose;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
@@ -206,7 +204,7 @@ public class BlueAuto extends NextOpMode {
     @Override
     public void end(){
         GlobalPose.CurrentPose = follower.pose();
-        GlobalPose.redAllience = false;
+        GlobalPose.redAlliance = false;
     }
 
 }
