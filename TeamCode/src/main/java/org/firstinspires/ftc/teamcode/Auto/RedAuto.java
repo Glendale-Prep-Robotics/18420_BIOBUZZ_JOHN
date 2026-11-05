@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.BallBlock;
 import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
+import org.firstinspires.ftc.teamcode.Mechanisms.Sensor;
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 import org.firstinspires.ftc.teamcode.Teleop.NextRobot;
@@ -199,7 +200,7 @@ public class RedAuto extends NextOpMode {
         follower.setPose(startPose);
         follower.update();
         GlobalPose.redAlliance = true;
-
+        Sensor.mode = Sensor.IndicatorLight.RED;
 
     }
     @Override

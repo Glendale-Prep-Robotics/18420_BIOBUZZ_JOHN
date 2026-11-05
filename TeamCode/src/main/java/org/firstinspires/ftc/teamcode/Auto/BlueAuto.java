@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.BallBlock;
 import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
+import org.firstinspires.ftc.teamcode.Mechanisms.Sensor;
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Teleop.NextRobot;
 import org.firstinspires.ftc.teamcode.Variables.GlobalPose;
@@ -183,6 +184,8 @@ public class BlueAuto extends NextOpMode {
         Scheduler.reset();
         follower.setPose(startPose);
         follower.update();
+        GlobalPose.redAlliance = false;
+        Sensor.mode = Sensor.IndicatorLight.BLUE;
 
         GlobalPose.redAlliance = false;
 
