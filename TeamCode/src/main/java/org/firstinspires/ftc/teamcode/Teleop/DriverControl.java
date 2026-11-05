@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Brake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
+import org.firstinspires.ftc.teamcode.Mechanisms.Sensor;
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 import org.firstinspires.ftc.teamcode.Variables.GlobalPose;
@@ -100,6 +101,13 @@ public class DriverControl extends NextOpMode {
             Telemetry.log("- left bumper to turn on and off turret tracking -");
             Telemetry.log("- Press Y, while Opmode active, to turn on flywheel -");
             Telemetry.log("I'll finish this later");
+        }
+
+        if(redAlliance){
+            Sensor.mode = Sensor.IndicatorLight.RED;
+        }
+        else{
+            Sensor.mode = Sensor.IndicatorLight.BLUE;
         }
     }
 
@@ -210,6 +218,13 @@ public class DriverControl extends NextOpMode {
                     -gamepad1.right_stick_x
             );
 
+        }
+
+        if(robot.sensor.fullIntake()){
+            Sensor.mode = Sensor.IndicatorLight.FULL;
+        }
+        else{
+            Sensor.mode = Sensor.IndicatorLight.NOT;
         }
 
         robot.turret.getTurretAngle(follower.pose(), redAlliance);

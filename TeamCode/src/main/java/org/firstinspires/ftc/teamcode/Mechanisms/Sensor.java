@@ -15,11 +15,13 @@ public class Sensor implements Mechanism {
     }
     public static IndicatorLight mode = IndicatorLight.BLUE;
 
-    public static double BLUE_COLOR = 0.3;//test all colors
-    public static double RED_COLOR = 0.5;
-    public static double FULL_COLOR = 0.56;
-    public static double NOT_COLOR = 0.75;
+    public static double BLUE_COLOR = 0.62;//test all colors
+    public static double RED_COLOR = 0.28;
+    public static double FULL_COLOR = 0.51;
+    public static double NOT_COLOR = 0.28;
     double val;
+
+    public static double distance = 3;
     @Override
     public void periodic(){
         rightSensor.update();
@@ -46,5 +48,14 @@ public class Sensor implements Mechanism {
         indicatorLight.setPosition(val);
 
 
+    }
+
+    public boolean fullIntake(){
+        if(rightSensor.isWithinDistance(distance) || leftSensor.isWithinDistance(distance)){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }
