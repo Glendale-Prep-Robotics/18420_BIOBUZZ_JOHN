@@ -184,6 +184,8 @@ public class BlueAuto extends NextOpMode {
         follower.setPose(startPose);
         follower.update();
 
+        GlobalPose.redAlliance = false;
+
 
 
     }
@@ -198,6 +200,10 @@ public class BlueAuto extends NextOpMode {
     public void periodic() {//loop
         follower.update();
         Scheduler.execute();
+
+        robot.shooter.refreshShooterVelo(follower.pose(), GlobalPose.redAlliance);
+        robot.hood.refreshHoodVal(follower.pose(), GlobalPose.redAlliance);
+        robot.turret.getTurretAngle(follower.pose(), GlobalPose.redAlliance);
 
     }
 

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Mechanisms;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.hardware.actuators.NextServo;
 import dev.nextftc.robot.Mechanism;
 
@@ -25,6 +26,7 @@ public class BallBlock implements Mechanism {
 
     @Override
     public void periodic(){
+        ballStop.setDirection(NextMotor.Direction.REVERSE);
         switch (mode) {
             case BALL_NO:
                 POSITION = CLOSE_POSITION;

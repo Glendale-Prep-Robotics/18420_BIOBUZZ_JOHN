@@ -50,7 +50,7 @@ public class RedAuto extends NextOpMode {
     public static double grabBallTime = 700;
     public static double turnTime = 1000;
 
-    private final Pose startPose = new Pose(55,8,Math.toRadians(90));
+    private final Pose startPose = new Pose(55,9,Math.toRadians(90));
     private final Pose firstShootA = new Pose(55,32,Math.toRadians(270));
     private final Pose grabGarden = new Pose(3,11,Math.toRadians(270));
     private final Pose firstTransition = new Pose(35,42,Math.toRadians(270));
@@ -59,7 +59,7 @@ public class RedAuto extends NextOpMode {
     private final Pose grabFlower = new Pose(50,129,Math.toRadians(90));
     private final Pose endPose = new Pose(15,115,Math.toRadians(90));
     private final Pose beforeFlowerGrab = new Pose(50,118,Math.toRadians(90));
-    private final Pose secondShootR = new Pose(55,136,Math.toRadians(0));
+    private final Pose secondShootR = new Pose(59,136,Math.toRadians(0));
 
     private Path StartGoFirstShootA() {
         return line(startPose, firstShootA).linear(startPose, firstShootA);
@@ -158,7 +158,7 @@ public class RedAuto extends NextOpMode {
                 instant(()->Turret.mode = Turret.TurretTracking.ON),
                 sequential(
                     enableShoot(),
-                    waitMs(spinUpTime),
+                    waitMs(2000),
                     shoot(),
                     waitMs(delayShootTime),
                     follow(follower, StartGoFirstShootA()),
@@ -173,20 +173,12 @@ public class RedAuto extends NextOpMode {
                     follow(follower, transitionShootRGoSecondShootR()), shoot(), waitMs(delayShootTime),
                     follow(follower, secondShootRGoTransitionShootR()),
                     follow(follower, transitionShootRGoBeforeGrabFlower()),
-                    intakeToFlower(), waitMs(500),
                     follow(follower, beforeGrabFlowerGoGrabFlower()),
+                    intakeToFlower(), waitMs(2000),
                     follow(follower, GrabFlowerGoBeforeGrabFlower()), intakeNo(),
                     follow(follower, beforeGrabFlowerGoTransitionShootR()),
                     follow(follower, transitionShootRGoSecondShootR()), waitMs(turnTime),
                     shoot(), waitMs(delayShootTime),
-                    follow(follower, secondShootRGoTransitionShootR()),
-                    follow(follower, transitionShootRGoBeforeGrabFlower()),
-                        intakeToFlower(), waitMs(500),
-                        follow(follower, beforeGrabFlowerGoGrabFlower()),
-                        follow(follower, GrabFlowerGoBeforeGrabFlower()), intakeNo(),
-                        follow(follower, beforeGrabFlowerGoTransitionShootR()),
-                        follow(follower, transitionShootRGoSecondShootR()), waitMs(turnTime),
-                        shoot(), waitMs(delayShootTime),
                         follow(follower, secondShootRGoTransitionShootR()),
                     follow(follower, transitionShootRGoEnd()),
                         disableShoot()
@@ -220,6 +212,9 @@ public class RedAuto extends NextOpMode {
         follower.update();
         Scheduler.execute();
         robot.turret.getTurretAngle(follower.pose(), GlobalPose.redAlliance);
+
+        robot.shooter.refreshShooterVelo(follower.pose(), GlobalPose.redAlliance);
+        robot.hood.refreshHoodVal(follower.pose(), GlobalPose.redAlliance);
 
         Telemetry.log("current Pose", follower.pose());
         Telemetry.log("current turret Angle", robot.turret.turretAngle);

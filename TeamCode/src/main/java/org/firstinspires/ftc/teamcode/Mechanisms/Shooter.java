@@ -17,11 +17,11 @@ import dev.nextftc.robot.Telemetry;
 
 @Config
 public class Shooter implements Mechanism {
-    public static double KP = 0.095;
+    public static double KP = 0.065;
     public double KI = 0;
     public double KD = 0;
-    public static double KV = 0.0000087;
-    public static double KS =0.009;
+    public static double KV = 0.0000076;
+    public static double KS =0.065;
     public double KA = 0;
     //F then P then D.
 
@@ -120,14 +120,14 @@ public class Shooter implements Mechanism {
 
         double distance = Math.sqrt((xVal*xVal)+(yVal*yVal));
 
-        double velo = distance;//write function here
+        double velo = (193.54839*distance) + 72258.0645;//write function here
 
         motorVelo = velo;
     }
 
     public boolean ShooterAtVelocity(){
         double velo = shooterMotor2.getEncoderVelocity().abs(DegreesPerSecond);
-        if(velo > 80000){
+        if(velo > 60000){
             return true;
         }
         else{

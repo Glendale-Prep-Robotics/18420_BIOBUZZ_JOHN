@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import dev.nextftc.hardware.actuators.NextServo;
 import dev.nextftc.hardware.sensors.NextDistanceSensor;
 import dev.nextftc.robot.Mechanism;
 
+@Config
 public class Sensor implements Mechanism {
     NextDistanceSensor rightSensor = new NextDistanceSensor("rs");
     NextDistanceSensor leftSensor = new NextDistanceSensor("ls");
@@ -21,7 +24,7 @@ public class Sensor implements Mechanism {
     public static double NOT_COLOR = 0.28;
     double val;
 
-    public static double distance = 3;
+    public static double distance = 3.5;
     @Override
     public void periodic(){
         rightSensor.update();
