@@ -17,7 +17,7 @@ public class Hood implements Mechanism {
     NextServo hoodServo1 = new NextServo("hs1");
     //NextServo hoodServo2 = new NextServo("hs2");
 
-    public static double openHoodPosition = 0.26;
+    public static double openHoodPosition;
     public static double closeHoodPosition = 0;
     public enum HoodState {
         SHOOT, CLOSE, INIT
@@ -26,7 +26,7 @@ public class Hood implements Mechanism {
 
     public static double val;
 
-    public static double hoodVal = 0;
+    public static double hoodVal = 0.26;
     @Override
     public void periodic(){
         switch (mode){
@@ -35,7 +35,7 @@ public class Hood implements Mechanism {
                 break;
 
             case CLOSE:
-                val = hoodVal;
+                val = 0;
                 break;
 
             case INIT:
@@ -43,11 +43,9 @@ public class Hood implements Mechanism {
         }
 
         hoodServo1.setDirection(NextMotor.Direction.REVERSE);//test
-        //hoodServo2.setDirection(NextMotor.Direction.REVERSE);//test
 
 
         hoodServo1.setPosition(val);
-        //hoodServo2.setPosition(val);
 
 
     }
@@ -81,7 +79,7 @@ public class Hood implements Mechanism {
 
         double distance = Math.sqrt((xVal*xVal)+(yVal*yVal));
 
-        double hoodvelo = (-0.0152419*distance) + 0.869677;//write function here
+        double hoodvelo = (-0.0203846*distance) + 1.22615;//write function here
 
         hoodVal = hoodvelo;
     }

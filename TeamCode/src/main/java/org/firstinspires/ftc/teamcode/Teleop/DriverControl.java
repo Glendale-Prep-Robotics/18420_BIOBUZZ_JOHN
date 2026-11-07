@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Variables.GlobalPose.redAlliance;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -157,13 +158,11 @@ public class DriverControl extends NextOpMode {
         if(shooterOn){
             Shooter.mode = Shooter.ShooterMode.ON;
             Hood.mode = Hood.HoodState.SHOOT;
-            shooter = ShooterOnMode.ON;
 
         }
        else{
             Shooter.mode = Shooter.ShooterMode.OFF;
             Hood.mode = Hood.HoodState.CLOSE;
-            shooter = ShooterOnMode.OFF;
         }
 
         if(choosePad.left_trigger > 0.5 && robot.shooter.ShooterAtVelocity()) {
@@ -227,7 +226,11 @@ public class DriverControl extends NextOpMode {
             Sensor.mode = Sensor.IndicatorLight.NOT;
         }
 
-        robot.turret.getTurretAngle(follower.pose(), redAlliance);
+        Pose curentPose = follower.pose();
+
+        robot.turret.getTurretAngle(curentPose, redAlliance);
+        robot.shooter.refreshShooterVelo(curentPose, redAlliance);
+        robot.hood.refreshHoodVal(curentPose, redAlliance);
         follower.update();
 
         Telemetry.log("arm toggle", armDown);

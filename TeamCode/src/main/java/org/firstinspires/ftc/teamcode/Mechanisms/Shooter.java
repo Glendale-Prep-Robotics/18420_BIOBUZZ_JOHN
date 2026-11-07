@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Variables.GoalPose.redAudienceGoal;
 import static org.firstinspires.ftc.teamcode.Variables.GoalPose.redRefereeGoal;
 
 import static dev.nextftc.units.Units.DegreesPerSecond;
+import static dev.nextftc.units.Units.getDegreesPerSecond;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.math.Pose;
@@ -17,11 +18,14 @@ import dev.nextftc.robot.Telemetry;
 
 @Config
 public class Shooter implements Mechanism {
-    public static double KP = 0.065;
+    public static double KPUp = 0.4;
+
+    public static double KPDown = 0.001;
+    public double KPUnknown;
     public double KI = 0;
     public double KD = 0;
-    public static double KV = 0.0000076;
-    public static double KS =0.065;
+    public static double KV = 0.0000074;
+    public static double KS = 0.005;
     public double KA = 0;
     //F then P then D.
 
@@ -37,7 +41,7 @@ public class Shooter implements Mechanism {
 
     public double val;
 
-    public static double motorVelo = 93000;
+    public static double motorVelo;//good far shoot: 80545
 
     public double realSpeed;
 
@@ -60,9 +64,10 @@ public class Shooter implements Mechanism {
                 val = motorVelo;
                 break;
         }
-
+        KPUnknown = shooterMotor2.getEncoderVelocity().abs(DegreesPerSecond) <= motorVelo ? KPUp : KPDown;
         double currentSpeed = shooterMotor2.getEncoderVelocity().abs(DegreesPerSecond);
-        double power =  ((KP*(val - currentSpeed))+(KV*val)+(KS*Math.signum(val)));
+        double power = ((KPUnknown * (val - currentSpeed)) + (KV * val) + (KS * Math.signum(val)));
+
 
         realSpeed = Range.clip(power,0,1);
         shooterMotor1.setThrottle(realSpeed);
@@ -120,8 +125,7 @@ public class Shooter implements Mechanism {
 
         double distance = Math.sqrt((xVal*xVal)+(yVal*yVal));
 
-        double velo = (193.54839*distance) + 72258.0645;//write function here
-
+        double velo = (251.73077*distance) + 69972.3077;//write function here
         motorVelo = velo;
     }
 
@@ -132,11 +136,6 @@ public class Shooter implements Mechanism {
         } else {
             return false;
         }
-    }
-
-    public double getShooterVelocity(){
-        double velo = shooterMotor2.getEncoderVelocity().abs(DegreesPerSecond);
-        return velo;
     }
 
 
