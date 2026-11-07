@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.hardware.actuators.NextServo;
 import dev.nextftc.robot.Mechanism;
-
+@Config
 public class Brake implements Mechanism {
     NextServo brakeServo1 = new NextServo("bs1");
     NextServo brakeServo2 = new NextServo("bs2");
@@ -15,7 +17,7 @@ public class Brake implements Mechanism {
     public static BrakeState mode = BrakeState.INIT;
 
     public static double NO_BREAK_POSITION = 0;
-    public static double BRAKE_POSITION = 0.25;
+    public static double BRAKE_POSITION = 0.225;
 
     private static double val;
 
