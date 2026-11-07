@@ -187,8 +187,6 @@ public class BlueAuto extends NextOpMode {
         GlobalPose.redAlliance = false;
         Sensor.mode = Sensor.IndicatorLight.BLUE;
 
-        GlobalPose.redAlliance = false;
-
 
 
     }
