@@ -10,6 +10,7 @@ import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
 
 import static com.pedropathing.ivy.commands.Commands.waitMs;
+import static com.pedropathing.ivy.commands.Commands.waitUntil;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 import static com.pedropathing.ivy.Scheduler.schedule;
@@ -43,6 +44,7 @@ public class RedAuto extends NextOpMode {
         this.robot = robot;
     }
     // for push
+    // yo yo yo mr tom ya gotta try wait for velocity or whatever
     private Follower follower = Constants.create(hardwareMap);
 
     public static double spinUpTime = 1000;
@@ -116,11 +118,13 @@ public class RedAuto extends NextOpMode {
         );
     }
     public Command shoot(){
-        return parallel(
-                //new FollowPath(path),
+        return sequential(
+                parallel(
                 instant(()-> Intake.mode = Intake.IntakeMode.ON),
                 instant(()-> Feeder.mode = Feeder.FeederMode.ON),
                 instant(()-> BallBlock.mode =BallBlock.BlockState.BALL_GO)
+                ),
+                waitUntil(() -> robot.shooter.ShooterAtVelocity())
         );
     }
 
@@ -174,8 +178,8 @@ public class RedAuto extends NextOpMode {
                     follow(follower, transitionShootRGoSecondShootR()), shoot(), waitMs(delayShootTime),
                     follow(follower, secondShootRGoTransitionShootR()),
                     follow(follower, transitionShootRGoBeforeGrabFlower()),
-                    intakeToFlower(), waitMs(2000),
-                        follow(follower, beforeGrabFlowerGoGrabFlower()),
+                    intakeToFlower(), waitMs(700),
+                        follow(follower, beforeGrabFlowerGoGrabFlower()), waitMs(1500),
                     follow(follower, GrabFlowerGoBeforeGrabFlower()), intakeNo(),
                     follow(follower, beforeGrabFlowerGoTransitionShootR()),
                     follow(follower, transitionShootRGoSecondShootR()), waitMs(turnTime),
