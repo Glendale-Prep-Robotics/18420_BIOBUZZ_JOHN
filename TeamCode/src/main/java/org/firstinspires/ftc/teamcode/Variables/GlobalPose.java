@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.Variables;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.math.Pose;
 
+@Config
 public class GlobalPose {
     public static Pose CurrentPose = new Pose(0,0,0);
 

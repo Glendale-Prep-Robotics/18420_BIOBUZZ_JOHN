@@ -207,6 +207,7 @@ public class DriverControl extends NextOpMode {
             Brake.mode = Brake.BrakeState.NO_BREAK;
         }
         // YO YO YO MY GABE MAN WHAT IS THIS?
+        //YO YO YOU MY TOMMY ITS TO DIASABLE DRIVE WHILE BRAKE IS ENGAGAED
         if(Brake.mode == Brake.BrakeState.BRAKE){
 
         }

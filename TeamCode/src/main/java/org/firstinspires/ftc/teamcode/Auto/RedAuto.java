@@ -118,12 +118,14 @@ public class RedAuto extends NextOpMode {
         );
     }
     public Command shoot(){
-        return sequential(
-                parallel(
+                return parallel(
                 instant(()-> Intake.mode = Intake.IntakeMode.ON),
                 instant(()-> Feeder.mode = Feeder.FeederMode.ON),
                 instant(()-> BallBlock.mode =BallBlock.BlockState.BALL_GO)
-                ),
+                );
+    }
+    public Command spinUp() {
+        return sequential(
                 waitUntil(() -> robot.shooter.ShooterAtVelocity())
         );
     }
@@ -163,11 +165,9 @@ public class RedAuto extends NextOpMode {
                 instant(()->Turret.mode = Turret.TurretTracking.ON),
                 sequential(
                     enableShoot(),
-                    waitMs(2000),
+                    spinUp(),
                     shoot(),
-                    waitMs(delayShootTime),
                     follow(follower, StartGoFirstShootA()),
-                    waitMs(delayShootTime),
                     intake(),
                     follow(follower, FirstShootAGoGrabGarden()),
                     waitMs(grabBallTime),
@@ -175,7 +175,7 @@ public class RedAuto extends NextOpMode {
                     intakeNo(),
                     follow(follower, FirstTransitionGoSecondTransition()),
                     follow(follower, SecondTransitionGoTransitionShootR()), waitMs(turretTurnTime),
-                    follow(follower, transitionShootRGoSecondShootR()), shoot(), waitMs(delayShootTime),
+                    follow(follower, transitionShootRGoSecondShootR()),spinUp(), shoot(), waitMs(delayShootTime),
                     follow(follower, secondShootRGoTransitionShootR()),
                     follow(follower, transitionShootRGoBeforeGrabFlower()),
                     intakeToFlower(), waitMs(700),
@@ -183,7 +183,7 @@ public class RedAuto extends NextOpMode {
                     follow(follower, GrabFlowerGoBeforeGrabFlower()), intakeNo(),
                     follow(follower, beforeGrabFlowerGoTransitionShootR()),
                     follow(follower, transitionShootRGoSecondShootR()), waitMs(turnTime),
-                    shoot(), waitMs(delayShootTime),
+                    spinUp(),shoot(), waitMs(delayShootTime),
                         follow(follower, secondShootRGoTransitionShootR()),
                     follow(follower, transitionShootRGoEnd()),
                         disableShoot()
