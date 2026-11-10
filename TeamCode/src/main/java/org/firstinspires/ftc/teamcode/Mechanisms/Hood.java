@@ -17,8 +17,8 @@ public class Hood implements Mechanism {
     NextServo hoodServo1 = new NextServo("hs1");
     //NextServo hoodServo2 = new NextServo("hs2");
 
-    public static double openHoodPosition;
     public static double closeHoodPosition = 0;
+    public static double OpenHoodPosition = 0.23;
     public enum HoodState {
         SHOOT, CLOSE, INIT
     }
@@ -26,12 +26,12 @@ public class Hood implements Mechanism {
 
     public static double val;
 
-    public static double hoodVal = 0.26;
+    public static double hoodVal ;
     @Override
     public void periodic(){
         switch (mode){
             case SHOOT:
-                val = openHoodPosition;
+                val = OpenHoodPosition;
                 break;
 
             case CLOSE:
@@ -81,6 +81,6 @@ public class Hood implements Mechanism {
 
         double hoodvelo = (-0.0203846*distance) + 1.22615;//write function here
 
-        hoodVal = hoodvelo;
+        //hoodVal = hoodvelo;
     }
 }

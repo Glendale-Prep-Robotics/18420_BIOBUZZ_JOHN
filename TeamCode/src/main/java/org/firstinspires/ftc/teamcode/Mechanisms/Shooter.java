@@ -18,8 +18,8 @@ import dev.nextftc.robot.Telemetry;
 
 @Config
 public class Shooter implements Mechanism {
-    public static double KPUp = 0.4;
 
+    public static double KPUp = 0.2;
     public static double KPDown = 0.001;
     public double KPUnknown;
     public double KI = 0;
@@ -28,7 +28,6 @@ public class Shooter implements Mechanism {
     public static double KS = 0.005;
     public double KA = 0;
     //F then P then D.
-
 
     NextMotor shooterMotor2 = new NextMotor("sm2");
     NextMotor shooterMotor1 = new NextMotor("sm1");
@@ -41,7 +40,9 @@ public class Shooter implements Mechanism {
 
     public double val;
 
-    public static double motorVelo;//good far shoot: 80545
+    public static double motorVelo = 80000;//good far shoot: 80545
+
+    public static double farShoot = 80000;
 
     public double realSpeed;
 
@@ -126,12 +127,12 @@ public class Shooter implements Mechanism {
         double distance = Math.sqrt((xVal*xVal)+(yVal*yVal));
 
         double velo = (251.73077*distance) + 69972.3077;//write function here
-        motorVelo = velo;
+        //motorVelo = velo;
     }
 
     public boolean ShooterAtVelocity() {
         double velo = shooterMotor2.getEncoderVelocity().abs(DegreesPerSecond);
-        if (velo > 65000) {
+        if (velo > 60000) {
             return true;
         } else {
             return false;

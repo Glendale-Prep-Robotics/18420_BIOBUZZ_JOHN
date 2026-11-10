@@ -57,12 +57,6 @@ public class DriverControl extends NextOpMode {
 
     private Follower follower = Constants.create(hardwareMap);
 
-    public enum ShooterOnMode{
-        ON, OFF
-    }
-
-    public ShooterOnMode shooter = ShooterOnMode.OFF;
-
 
     @Override
     public void disabledPeriodic() {
@@ -165,7 +159,7 @@ public class DriverControl extends NextOpMode {
             Hood.mode = Hood.HoodState.CLOSE;
         }
 
-        if(choosePad.left_trigger > 0.5 && robot.shooter.ShooterAtVelocity()) {
+        if(choosePad.left_trigger > 0.5) {
             Feeder.mode = Feeder.FeederMode.ON;
             Intake.mode = Intake.IntakeMode.ON;
             BallBlock.mode = BallBlock.BlockState.BALL_GO;
@@ -184,7 +178,6 @@ public class DriverControl extends NextOpMode {
         }
 
         if(choosePad.dpadRightWasPressed()){
-
             GoalPose.blueAudienceX +=2;
             GoalPose.blueRefereeX +=2;
             GoalPose.redaudienceX +=2;

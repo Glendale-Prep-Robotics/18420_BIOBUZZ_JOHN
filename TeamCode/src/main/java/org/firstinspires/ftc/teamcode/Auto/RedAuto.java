@@ -44,7 +44,8 @@ public class RedAuto extends NextOpMode {
         this.robot = robot;
     }
     // for push
-    // yo yo yo mr tom ya gotta try wait for velocity or whatever
+    //TODO yo yo yo mr tom ya gotta try wait for velocity or whatever
+    // yo yo yo my tom man i did it dont worry
     private Follower follower = Constants.create(hardwareMap);
 
     public static double spinUpTime = 1000;
@@ -56,8 +57,8 @@ public class RedAuto extends NextOpMode {
     private final Pose startPose = new Pose(55,9,Math.toRadians(90));
     private final Pose firstShootA = new Pose(55,32,Math.toRadians(270));
     private final Pose grabGarden = new Pose(3,11,Math.toRadians(270));
-    private final Pose firstTransition = new Pose(35,42,Math.toRadians(270));
-    private final Pose secondTransition = new Pose(36,118,Math.toRadians(90));
+    private final Pose firstTransition = new Pose(34,42,Math.toRadians(270));
+    private final Pose secondTransition = new Pose(34,118,Math.toRadians(90));
     private final Pose transitionShootR = new Pose(59,118,Math.toRadians(0));
     private final Pose grabFlower = new Pose(50,129,Math.toRadians(90));
     private final Pose endPose = new Pose(15,115,Math.toRadians(90));
@@ -178,7 +179,7 @@ public class RedAuto extends NextOpMode {
                     follow(follower, transitionShootRGoSecondShootR()),spinUp(), shoot(), waitMs(delayShootTime),
                     follow(follower, secondShootRGoTransitionShootR()),
                     follow(follower, transitionShootRGoBeforeGrabFlower()),
-                    intakeToFlower(), waitMs(700),
+                    intakeToFlower(), waitMs(500),
                         follow(follower, beforeGrabFlowerGoGrabFlower()), waitMs(1500),
                     follow(follower, GrabFlowerGoBeforeGrabFlower()), intakeNo(),
                     follow(follower, beforeGrabFlowerGoTransitionShootR()),
