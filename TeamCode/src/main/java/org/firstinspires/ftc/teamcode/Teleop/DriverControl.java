@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
 
+import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.blueAudienceGoal;
+import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.blueRefereeGoal;
+import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.redRefereeGoal;
 import static org.firstinspires.ftc.teamcode.Variables.GlobalPose.redAlliance;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -14,13 +17,13 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.BallBlock;
 import org.firstinspires.ftc.teamcode.Mechanisms.Brake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Feeder;
+import org.firstinspires.ftc.teamcode.Mechanisms.GoalPose;
 import org.firstinspires.ftc.teamcode.Mechanisms.Hood;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Sensor;
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 import org.firstinspires.ftc.teamcode.Variables.GlobalPose;
-import org.firstinspires.ftc.teamcode.Variables.GoalPose;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 import dev.nextftc.robot.Telemetry;
@@ -235,6 +238,10 @@ public class DriverControl extends NextOpMode {
        Telemetry.log("Hood state", Hood.mode);
        Telemetry.log("Shooter State", Shooter.mode);
        Telemetry.log("current Pose", follower.pose());
+       Telemetry.log("blue audience goal", blueAudienceGoal);
+       Telemetry.log("blue referee goal", blueRefereeGoal);
+       Telemetry.log("red Audience goal", blueAudienceGoal);
+       Telemetry.log("red Referee goal", redRefereeGoal);
 
     }
 

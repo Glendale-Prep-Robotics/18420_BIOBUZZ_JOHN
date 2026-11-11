@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
-import static org.firstinspires.ftc.teamcode.Variables.GoalPose.blueAudienceGoal;
-import static org.firstinspires.ftc.teamcode.Variables.GoalPose.blueRefereeGoal;
-import static org.firstinspires.ftc.teamcode.Variables.GoalPose.redAudienceGoal;
-import static org.firstinspires.ftc.teamcode.Variables.GoalPose.redRefereeGoal;
+import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.blueAudienceGoal;
+import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.blueRefereeGoal;
+import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.redAudienceGoal;
+import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.redRefereeGoal;
 
 import static dev.nextftc.units.Units.DegreesPerSecond;
 import static dev.nextftc.units.Units.getDegreesPerSecond;
@@ -132,7 +132,7 @@ public class Shooter implements Mechanism {
 
     public boolean ShooterAtVelocity() {
         double velo = shooterMotor2.getEncoderVelocity().abs(DegreesPerSecond);
-        if (velo > 60000) {
+        if (velo > 77500) {
             return true;
         } else {
             return false;

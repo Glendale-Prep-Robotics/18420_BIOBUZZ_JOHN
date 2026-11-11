@@ -54,7 +54,7 @@ public class RedAuto extends NextOpMode {
     public static double grabBallTime = 700;
     public static double turnTime = 1000;
 
-    private final Pose startPose = new Pose(55,9,Math.toRadians(90));
+    private final Pose startPose = new Pose(54,8,Math.toRadians(90));
     private final Pose firstShootA = new Pose(55,32,Math.toRadians(270));
     private final Pose grabGarden = new Pose(3,11,Math.toRadians(270));
     private final Pose firstTransition = new Pose(34,42,Math.toRadians(270));
@@ -103,14 +103,14 @@ public class RedAuto extends NextOpMode {
     }
 
 
-    public Command enableShoot(){
+    public static Command enableShoot(){
         return parallel(
                 instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
                 instant(()-> Shooter.mode = Shooter.ShooterMode.ON),
                 instant(()->Hood.mode = Hood.HoodState.SHOOT)
         );
     }
-    public Command disableShoot() {
+    public static Command disableShoot() {
         return parallel(
                 instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
                 instant(()-> Shooter.mode = Shooter.ShooterMode.OFF),
@@ -118,7 +118,7 @@ public class RedAuto extends NextOpMode {
                 instant(()-> Feeder.mode = Feeder.FeederMode.OFF)
         );
     }
-    public Command shoot(){
+    public static Command shoot(){
                 return parallel(
                 instant(()-> Intake.mode = Intake.IntakeMode.ON),
                 instant(()-> Feeder.mode = Feeder.FeederMode.ON),
@@ -131,34 +131,27 @@ public class RedAuto extends NextOpMode {
         );
     }
 
-    public Command intake(){
+    public static Command intake(){
         return parallel(
           instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
           instant(()-> Intake.mode = Intake.IntakeMode.ON),
           instant(()-> Feeder.mode = Feeder.FeederMode.INTAKE)
         );
     }
-    public Command intakeNo(){
+    public static Command intakeNo(){
         return parallel(
           instant(()-> Feeder.mode = Feeder.FeederMode.OFF),
           instant(()-> Intake.mode = Intake.IntakeMode.OFF),
           instant(()-> Arm.mode = Arm.FlowerPiviotState.UP)
         );
     }
-    public Command intakeToFlower(){
+    public static Command intakeToFlower(){
         return parallel(
                 //new FollowPath(path),
                 instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
                 instant(()-> Intake.mode = Intake.IntakeMode.ON),
                 instant(()-> Arm.mode = Arm.FlowerPiviotState.DOWN),
                 instant(()-> Feeder.mode =  Feeder.FeederMode.INTAKE)
-        );
-    }
-    public Command intakeToGarden(){
-        return parallel(
-                //new FollowPath(path),
-                instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
-                instant(()-> Intake.mode = Intake.IntakeMode.ON)
         );
     }
     public Command autoRoutine() {
@@ -168,6 +161,7 @@ public class RedAuto extends NextOpMode {
                     enableShoot(),
                     spinUp(),
                     shoot(),
+                    waitMs(500),
                     follow(follower, StartGoFirstShootA()),
                     intake(),
                     follow(follower, FirstShootAGoGrabGarden()),
