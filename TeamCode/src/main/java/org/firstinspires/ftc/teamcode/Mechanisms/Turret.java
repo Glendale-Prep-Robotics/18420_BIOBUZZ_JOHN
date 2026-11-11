@@ -23,7 +23,7 @@ import dev.nextftc.robot.Telemetry;
 @Config
 public class Turret implements Mechanism {
     public enum TurretTracking{
-        ON, OFF, INIT, ALL
+        ON, OFF, INIT
     }
     public static TurretTracking mode = TurretTracking.INIT;
 
@@ -108,8 +108,10 @@ public class Turret implements Mechanism {
         Telemetry.log("target Angle", trueAngle);
         Telemetry.log("robo heading", Math.toDegrees(robotHeading));
         Telemetry.log("calculated angle", Math.toDegrees(angle));
+    }
 
-
-
+    public void goToZero(){
+        turretServo1.setPosition(0.5);
+        turretServo2.setPosition(0.5);
     }
 }

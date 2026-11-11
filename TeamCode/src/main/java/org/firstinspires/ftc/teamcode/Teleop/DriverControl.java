@@ -101,18 +101,18 @@ public class DriverControl extends NextOpMode {
             Telemetry.log("I'll finish this later");
         }
 
-        if(redAlliance){
-            Sensor.mode = Sensor.IndicatorLight.RED;
-        }
-        else{
-            Sensor.mode = Sensor.IndicatorLight.BLUE;
-        }
+        robot.sensor.allianceIndicator(redAlliance);
     }
 
     @Override
     public void start(){
         Telemetry.addBackend(FtcDashboard.getInstance().getTelemetry());
-        follower.setPose(GlobalPose.CurrentPose);
+        if(GlobalPose.CurrentPose == null){
+            Pose newPose = new Pose(0,0,0);
+            follower.setPose(newPose);
+        }else {
+            follower.setPose(GlobalPose.CurrentPose);
+        }
     }
     @Override
     public void periodic() {
@@ -162,7 +162,7 @@ public class DriverControl extends NextOpMode {
             Hood.mode = Hood.HoodState.CLOSE;
         }
 
-        if(choosePad.left_trigger > 0.5) {
+        if(choosePad.left_trigger > 0.5 && robot.shooter.ShooterAtVelocityTeleop()) {
             Feeder.mode = Feeder.FeederMode.ON;
             Intake.mode = Intake.IntakeMode.ON;
             BallBlock.mode = BallBlock.BlockState.BALL_GO;

@@ -56,16 +56,16 @@ public class BlueAuto extends NextOpMode {
 
 
 
-    private final Pose startPose = new Pose(fieldLengthXY-55,fieldLengthXY-9,Math.toRadians(90)+pi);
+    private final Pose startPose = new Pose(fieldLengthXY-54,fieldLengthXY-8,Math.toRadians(90)+pi);
     private final Pose firstShootR = new Pose(fieldLengthXY - 55,fieldLengthXY - 32,Math.toRadians(270) + pi);
-    private final Pose grabGarden = new Pose(fieldLengthXY-3,fieldLengthXY - 11,Math.toRadians(270) + pi);
-    private final Pose firstTransition = new Pose(fieldLengthXY-34,fieldLengthXY-42,Math.toRadians(270)+pi);
-    private final Pose secondTransition = new Pose(fieldLengthXY-34,fieldLengthXY-118,Math.toRadians(90)+pi);
+    private final Pose grabGarden = new Pose(fieldLengthXY-3,fieldLengthXY - 11.5,Math.toRadians(270) + pi);
+    private final Pose firstTransition = new Pose(fieldLengthXY-30,fieldLengthXY-42,Math.toRadians(270)+pi);
+    private final Pose secondTransition = new Pose(fieldLengthXY-30,fieldLengthXY-118,Math.toRadians(90)+pi);
     private final Pose transitionShootA = new Pose(fieldLengthXY-59,fieldLengthXY-118,Math.toRadians(0)+pi);
     private final Pose grabFlower = new Pose(fieldLengthXY-50,fieldLengthXY-129,Math.toRadians(90)+pi);
     private final Pose endPose = new Pose(fieldLengthXY-15,fieldLengthXY-115,Math.toRadians(90)+pi);
     private final Pose beforeFlowerGrab = new Pose(fieldLengthXY-50,fieldLengthXY-118,Math.toRadians(90)+pi);
-    private final Pose secondShootA = new Pose(fieldLengthXY-59,fieldLengthXY-136,Math.toRadians(0)+pi);
+    private final Pose secondShootA = new Pose(fieldLengthXY-59,fieldLengthXY-133,Math.toRadians(0)+pi);
 
 
 
@@ -119,6 +119,7 @@ public class BlueAuto extends NextOpMode {
                         enableShoot(),
                         spinUp(),
                         shoot(),
+                        waitMs(500),
                         follow(follower, StartGoFirstShootR()),
                         intake(),
                         follow(follower, FirstShootAGoGrabGarden()),
@@ -126,8 +127,8 @@ public class BlueAuto extends NextOpMode {
                         follow(follower, GrabGardenGoFirstTransition()),
                         intakeNo(),
                         follow(follower, FirstTransitionGoSecondTransition()),
-                        follow(follower, SecondTransitionGoTransitionShootR()), waitMs(turretTurnTime),
-                        follow(follower, transitionShootRGoSecondShootR()),spinUp(), shoot(), waitMs(delayShootTime),
+                        follow(follower, SecondTransitionGoTransitionShootR()), waitMs(500),
+                        follow(follower, transitionShootRGoSecondShootR()),spinUp(), waitMs(1000), shoot(), waitMs(1000),
                         follow(follower, secondShootRGoTransitionShootR()),
                         follow(follower, transitionShootRGoBeforeGrabFlower()),
                         intakeToFlower(), waitMs(500),
@@ -135,7 +136,7 @@ public class BlueAuto extends NextOpMode {
                         follow(follower, GrabFlowerGoBeforeGrabFlower()), intakeNo(),
                         follow(follower, beforeGrabFlowerGoTransitionShootR()),
                         follow(follower, transitionShootRGoSecondShootR()), waitMs(turnTime),
-                        spinUp(),shoot(), waitMs(delayShootTime),
+                        spinUp(),shoot(), waitMs(1000),
                         follow(follower, secondShootRGoTransitionShootR()),
                         follow(follower, transitionShootRGoEnd()),
                         disableShoot()
@@ -149,7 +150,9 @@ public class BlueAuto extends NextOpMode {
         follower.setPose(startPose);
         follower.update();
         GlobalPose.redAlliance = false;
-        Sensor.mode = Sensor.IndicatorLight.BLUE;
+        robot.turret.goToZero();
+        robot.sensor.allianceIndicator(GlobalPose.redAlliance);
+        robot.ballBlock.ballBlockOut();
 
 
 

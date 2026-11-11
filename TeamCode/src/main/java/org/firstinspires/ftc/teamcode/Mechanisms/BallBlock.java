@@ -46,5 +46,9 @@ public class BallBlock implements Mechanism {
         }
     }
 
+    public void ballBlockOut(){
+        ballStop.setPosition(CLOSE_POSITION);
+    }
+
 
 }
