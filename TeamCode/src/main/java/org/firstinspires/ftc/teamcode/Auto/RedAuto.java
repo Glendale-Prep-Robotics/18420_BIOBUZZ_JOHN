@@ -60,7 +60,7 @@ public class RedAuto extends NextOpMode {
     private final Pose firstTransition = new Pose(34,42,Math.toRadians(270));
     private final Pose secondTransition = new Pose(34,118,Math.toRadians(90));
     private final Pose transitionShootR = new Pose(59,118,Math.toRadians(0));
-    private final Pose grabFlower = new Pose(52,129,Math.toRadians(90));
+    private final Pose grabFlower = new Pose(56,129,Math.toRadians(90));
     private final Pose endPose = new Pose(15,115,Math.toRadians(90));
     private final Pose beforeFlowerGrab = new Pose(50,118,Math.toRadians(90));
     private final Pose secondShootR = new Pose(59,133,Math.toRadians(0));
