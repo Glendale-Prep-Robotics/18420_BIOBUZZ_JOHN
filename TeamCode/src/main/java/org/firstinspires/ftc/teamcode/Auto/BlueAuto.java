@@ -65,7 +65,7 @@ public class BlueAuto extends NextOpMode {
     private final Pose grabFlower = new Pose(fieldLengthXY-50,fieldLengthXY-129,Math.toRadians(90)+pi);
     private final Pose endPose = new Pose(fieldLengthXY-15,fieldLengthXY-115,Math.toRadians(90)+pi);
     private final Pose beforeFlowerGrab = new Pose(fieldLengthXY-50,fieldLengthXY-118,Math.toRadians(90)+pi);
-    private final Pose secondShootA = new Pose(fieldLengthXY-59,fieldLengthXY-136,Math.toRadians(0)+pi);
+    private final Pose secondShootA = new Pose(fieldLengthXY-59,fieldLengthXY-133,Math.toRadians(0)+pi);
 
 
 
