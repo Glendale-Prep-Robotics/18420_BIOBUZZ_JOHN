@@ -41,9 +41,9 @@ public class Shooter implements Mechanism {
 
     public double val;
 
-    public static double motorVelo = 80000;//good far shoot: 80545
+    public static double motorVelo = 82500;//good far shoot: 80545
 
-    public static double farShoot = 80000;
+    public static double farShoot = 82500;
 
     public double realSpeed;
 
@@ -134,7 +134,7 @@ public class Shooter implements Mechanism {
 
     public boolean ShooterAtVelocity() {
         double velo = shooterMotor2.getEncoderVelocity().abs(DegreesPerSecond);
-        if (velo > 79500) {
+        if (velo > 82000) {
             return true;
         } else {
             return false;

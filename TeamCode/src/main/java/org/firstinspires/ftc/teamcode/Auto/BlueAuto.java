@@ -17,7 +17,6 @@ import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
-import static org.firstinspires.ftc.teamcode.Auto.RedAuto.delayShootTime;
 import static org.firstinspires.ftc.teamcode.Auto.RedAuto.disableShoot;
 import static org.firstinspires.ftc.teamcode.Auto.RedAuto.enableShoot;
 import static org.firstinspires.ftc.teamcode.Auto.RedAuto.grabBallTime;
@@ -26,9 +25,7 @@ import static org.firstinspires.ftc.teamcode.Auto.RedAuto.intakeNo;
 import static org.firstinspires.ftc.teamcode.Auto.RedAuto.intakeToFlower;
 import static org.firstinspires.ftc.teamcode.Auto.RedAuto.shoot;
 import static org.firstinspires.ftc.teamcode.Auto.RedAuto.turnTime;
-import static org.firstinspires.ftc.teamcode.Auto.RedAuto.turretTurnTime;
 
-import org.firstinspires.ftc.teamcode.Mechanisms.Sensor;
 import org.firstinspires.ftc.teamcode.Mechanisms.Turret;
 import org.firstinspires.ftc.teamcode.Teleop.NextRobot;
 import org.firstinspires.ftc.teamcode.Variables.GlobalPose;
@@ -62,7 +59,7 @@ public class BlueAuto extends NextOpMode {
     private final Pose firstTransition = new Pose(fieldLengthXY-30,fieldLengthXY-42,Math.toRadians(270)+pi);
     private final Pose secondTransition = new Pose(fieldLengthXY-30,fieldLengthXY-118,Math.toRadians(90)+pi);
     private final Pose transitionShootA = new Pose(fieldLengthXY-59,fieldLengthXY-118,Math.toRadians(0)+pi);
-    private final Pose grabFlower = new Pose(fieldLengthXY-50,fieldLengthXY-129,Math.toRadians(90)+pi);
+    private final Pose grabFlower = new Pose(fieldLengthXY-54,fieldLengthXY-129,Math.toRadians(90)+pi);
     private final Pose endPose = new Pose(fieldLengthXY-15,fieldLengthXY-115,Math.toRadians(90)+pi);
     private final Pose beforeFlowerGrab = new Pose(fieldLengthXY-50,fieldLengthXY-118,Math.toRadians(90)+pi);
     private final Pose secondShootA = new Pose(fieldLengthXY-59,fieldLengthXY-133,Math.toRadians(0)+pi);
@@ -72,7 +69,7 @@ public class BlueAuto extends NextOpMode {
     private Path StartGoFirstShootR() {
         return line(startPose, firstShootR).linear(startPose, firstShootR);
     }
-    private Path FirstShootAGoGrabGarden(){
+    private Path FirstShootRGoGrabGarden(){
         return line(firstShootR, grabGarden).linear(firstShootR, grabGarden);
     }
     private Path GrabGardenGoFirstTransition(){
@@ -81,19 +78,19 @@ public class BlueAuto extends NextOpMode {
     private Path FirstTransitionGoSecondTransition(){
         return line(firstTransition, secondTransition).linear(firstTransition,secondTransition);
     }
-    private Path SecondTransitionGoTransitionShootR(){
+    private Path SecondTransitionGoTransitionShootA(){
         return line(secondTransition, transitionShootA).linear(secondTransition, transitionShootA);
     }
-    private Path transitionShootRGoSecondShootR(){
+    private Path transitionShootAGoSecondShootA(){
         return line(transitionShootA, secondShootA).constant(transitionShootA);
     }
-    private Path secondShootRGoTransitionShootR() {
+    private Path secondShootAGoTransitionShootA() {
         return line(secondShootA, transitionShootA).linear(secondShootA, transitionShootA);
     }
-    private Path transitionShootRGoBeforeGrabFlower() {
+    private Path transitionShootAGoBeforeGrabFlower() {
         return line(transitionShootA,beforeFlowerGrab).linear(transitionShootA,beforeFlowerGrab);
     }
-    private Path beforeGrabFlowerGoTransitionShootR() {
+    private Path beforeGrabFlowerGoTransitionShootA() {
         return line(beforeFlowerGrab,transitionShootA).linear(beforeFlowerGrab,transitionShootA);
     }
     private Path beforeGrabFlowerGoGrabFlower() {
@@ -102,7 +99,7 @@ public class BlueAuto extends NextOpMode {
     private Path GrabFlowerGoBeforeGrabFlower(){
         return line(grabFlower, beforeFlowerGrab).linear(grabFlower, beforeFlowerGrab);
     }
-    private Path transitionShootRGoEnd(){
+    private Path transitionShootAGoEnd(){
         return line(transitionShootA, endPose).linear(transitionShootA, endPose);
     }
 
@@ -113,7 +110,8 @@ public class BlueAuto extends NextOpMode {
     }
 
     public Command autoRoutine() {
-        return parallel(
+        return sequential(
+                parallel(
                 instant(()-> Turret.mode = Turret.TurretTracking.ON),
                 sequential(
                         enableShoot(),
@@ -122,26 +120,31 @@ public class BlueAuto extends NextOpMode {
                         waitMs(500),
                         follow(follower, StartGoFirstShootR()),
                         intake(),
-                        follow(follower, FirstShootAGoGrabGarden()),
+                        follow(follower, FirstShootRGoGrabGarden()),
                         waitMs(grabBallTime),
-                        follow(follower, GrabGardenGoFirstTransition()),
+                        follow(follower, GrabGardenGoFirstTransition())
+                        )),
+                        instant(()-> Turret.mode = Turret.TurretTracking.OFF),
                         intakeNo(),
                         follow(follower, FirstTransitionGoSecondTransition()),
-                        follow(follower, SecondTransitionGoTransitionShootR()), waitMs(500),
-                        follow(follower, transitionShootRGoSecondShootR()),spinUp(), waitMs(1000), shoot(), waitMs(1000),
-                        follow(follower, secondShootRGoTransitionShootR()),
-                        follow(follower, transitionShootRGoBeforeGrabFlower()),
+                        follow(follower, SecondTransitionGoTransitionShootA()), waitMs(500),
+                        parallel(
+                                instant(()->Turret.mode = Turret.TurretTracking.ON),
+                                sequential(
+                        follow(follower, transitionShootAGoSecondShootA()),spinUp(), waitMs(1000), shoot(), waitMs(1000),
+                        follow(follower, secondShootAGoTransitionShootA()),
+                        follow(follower, transitionShootAGoBeforeGrabFlower()),
                         intakeToFlower(), waitMs(500),
                         follow(follower, beforeGrabFlowerGoGrabFlower()), waitMs(1500),
                         follow(follower, GrabFlowerGoBeforeGrabFlower()), intakeNo(),
-                        follow(follower, beforeGrabFlowerGoTransitionShootR()),
-                        follow(follower, transitionShootRGoSecondShootR()), waitMs(turnTime),
+                        follow(follower, beforeGrabFlowerGoTransitionShootA()),
+                        follow(follower, transitionShootAGoSecondShootA()), waitMs(turnTime),
                         spinUp(),shoot(), waitMs(1000),
-                        follow(follower, secondShootRGoTransitionShootR()),
-                        follow(follower, transitionShootRGoEnd()),
+                        follow(follower, secondShootAGoTransitionShootA()),
+                        follow(follower, transitionShootAGoEnd()),
                         disableShoot()
 
-                ));
+                )));
     }
 
     @Override

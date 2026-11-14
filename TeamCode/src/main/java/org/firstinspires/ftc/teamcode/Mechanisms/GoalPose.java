@@ -16,7 +16,7 @@ public class GoalPose implements Mechanism {
     public static double redAudienceY = 60;
 
     public static double blueRefereeX = 85;
-    public static double blueAudienceX = 85;
+    public static double blueAudienceX = 82;
 
     public static double blueRefereeY = 75;
     public static double blueAudienceY = 60;
