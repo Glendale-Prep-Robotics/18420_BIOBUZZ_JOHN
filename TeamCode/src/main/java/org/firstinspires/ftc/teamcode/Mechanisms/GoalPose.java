@@ -6,7 +6,7 @@ import com.pedropathing.math.Pose;
 import dev.nextftc.robot.Mechanism;
 
 @Config
-public class GoalPose implements Mechanism {
+public class  GoalPose implements Mechanism {
     public static int fieldLengthXY = 144;
 
     public static double redaudienceX = 58;
