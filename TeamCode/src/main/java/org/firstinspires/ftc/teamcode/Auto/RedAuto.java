@@ -56,7 +56,7 @@ public class RedAuto extends NextOpMode {
 
     private final Pose startPose = new Pose(54,8,Math.toRadians(90));
     private final Pose firstShootA = new Pose(55,32,Math.toRadians(270));
-    private final Pose grabGarden = new Pose(3,11,Math.toRadians(270));
+    private final Pose grabGarden = new Pose(3,11.5,Math.toRadians(270));
     private final Pose firstTransition = new Pose(34,42,Math.toRadians(270));
     private final Pose secondTransition = new Pose(34,118,Math.toRadians(90));
     private final Pose transitionShootR = new Pose(59,118,Math.toRadians(0));
@@ -160,8 +160,9 @@ public class RedAuto extends NextOpMode {
                 sequential(
                     enableShoot(),
                     spinUp(),
+                    waitMs(1000),
                     shoot(),
-                    waitMs(500),
+                    waitMs(1000),
                     follow(follower, StartGoFirstShootA()),
                     intake(),
                     follow(follower, FirstShootAGoGrabGarden()),
@@ -170,7 +171,7 @@ public class RedAuto extends NextOpMode {
                     intakeNo(),
                     follow(follower, FirstTransitionGoSecondTransition()),
                     follow(follower, SecondTransitionGoTransitionShootR()), waitMs(turretTurnTime),
-                    follow(follower, transitionShootRGoSecondShootR()),spinUp(), shoot(), waitMs(delayShootTime),
+                    follow(follower, transitionShootRGoSecondShootR()),waitMs(1000), shoot(), waitMs(1000),
                     follow(follower, secondShootRGoTransitionShootR()),
                     follow(follower, transitionShootRGoBeforeGrabFlower()),
                     intakeToFlower(), waitMs(500),
@@ -178,13 +179,12 @@ public class RedAuto extends NextOpMode {
                     follow(follower, GrabFlowerGoBeforeGrabFlower()), intakeNo(),
                     follow(follower, beforeGrabFlowerGoTransitionShootR()),
                     follow(follower, transitionShootRGoSecondShootR()), waitMs(turnTime),
-                    spinUp(),shoot(), waitMs(delayShootTime),
+                    spinUp(),waitMs(1000), shoot(), waitMs(1000),
                         follow(follower, secondShootRGoTransitionShootR()),
                     follow(follower, transitionShootRGoEnd()),
                         disableShoot()
 
         ));
-
     }
 
 
@@ -199,7 +199,9 @@ public class RedAuto extends NextOpMode {
         follower.setPose(startPose);
         follower.update();
         GlobalPose.redAlliance = true;
-        Sensor.mode = Sensor.IndicatorLight.RED;
+        robot.turret.goToZero();
+        robot.sensor.allianceIndicator(GlobalPose.redAlliance);
+        robot.ballBlock.ballBlockOut();
 
     }
     @Override

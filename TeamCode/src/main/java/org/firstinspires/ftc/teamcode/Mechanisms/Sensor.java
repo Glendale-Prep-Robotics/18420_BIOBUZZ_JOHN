@@ -61,4 +61,13 @@ public class Sensor implements Mechanism {
             return false;
         }
     }
+
+    public void allianceIndicator(boolean areWeRed){
+        if(areWeRed){
+            indicatorLight.setPosition(RED_COLOR);
+        }
+        else{
+            indicatorLight.setPosition(BLUE_COLOR);
+        }
+    }
 }

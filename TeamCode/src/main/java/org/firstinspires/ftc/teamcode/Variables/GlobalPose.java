@@ -5,7 +5,7 @@ import com.pedropathing.math.Pose;
 
 @Config
 public class GlobalPose {
-    public static Pose CurrentPose = new Pose(0,0,0);
+    public static Pose CurrentPose;
 
     public static Pose redZeroPose = new Pose(9.5, 127.25, Math.toRadians(270));
     public static Pose blueZeroPose = new Pose(133.5, 15.25, Math.toRadians(90));

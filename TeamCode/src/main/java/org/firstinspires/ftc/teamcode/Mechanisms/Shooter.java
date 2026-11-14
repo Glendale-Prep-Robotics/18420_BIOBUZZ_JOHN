@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.redAudienceGoal
 import static org.firstinspires.ftc.teamcode.Mechanisms.GoalPose.redRefereeGoal;
 
 import static dev.nextftc.units.Units.DegreesPerSecond;
+import static dev.nextftc.units.Units.Volts;
 import static dev.nextftc.units.Units.getDegreesPerSecond;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -71,7 +72,8 @@ public class Shooter implements Mechanism {
 
 
         realSpeed = Range.clip(power,0,1);
-        shooterMotor1.setThrottle(realSpeed);
+        realSpeed = realSpeed * 12;
+        shooterMotor1.setVoltage(Volts.of(realSpeed));
         Telemetry.log("current Speed", currentSpeed);
         Telemetry.log("setPoint", realSpeed);
         Telemetry.log("shooter Error", motorVelo-currentSpeed);
@@ -132,7 +134,16 @@ public class Shooter implements Mechanism {
 
     public boolean ShooterAtVelocity() {
         double velo = shooterMotor2.getEncoderVelocity().abs(DegreesPerSecond);
-        if (velo > 77500) {
+        if (velo > 79500) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean ShooterAtVelocityTeleop() {
+        double velo = shooterMotor2.getEncoderVelocity().abs(DegreesPerSecond);
+        if (velo > 70000) {
             return true;
         } else {
             return false;

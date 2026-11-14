@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import static dev.nextftc.units.Units.Volts;
+
 import com.acmerobotics.dashboard.config.Config;
 
 import dev.nextftc.hardware.actuators.NextMotor;
@@ -30,7 +32,7 @@ public class Feeder implements Mechanism {
                 break;
 
             case ON:
-                val2 = FEEDER_ON_SHOOT;
+                val2 = FEEDER_ON_SHOOT * 12;
                 break;
 
             case OFF:
@@ -38,7 +40,7 @@ public class Feeder implements Mechanism {
                 break;
 
             case INTAKE:
-                val2 = FEEDER_ON_INTAKE;
+                val2 = FEEDER_ON_INTAKE * 12;
                 break;
 
             case REVERSE:
@@ -47,6 +49,6 @@ public class Feeder implements Mechanism {
 
 
         FeederMotor.setDirection(NextMotor.Direction.FORWARD);
-        FeederMotor.setThrottle(val2);
+        FeederMotor.setVoltage(Volts.of(val2));
     }
 }
