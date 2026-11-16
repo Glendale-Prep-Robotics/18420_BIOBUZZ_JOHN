@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Mechanisms;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import dev.nextftc.hardware.actuators.NextRGBIndicator;
 import dev.nextftc.hardware.actuators.NextServo;
 import dev.nextftc.hardware.sensors.NextDistanceSensor;
 import dev.nextftc.robot.Mechanism;
@@ -11,7 +12,7 @@ public class Sensor implements Mechanism {
     NextDistanceSensor rightSensor = new NextDistanceSensor("rs");
     NextDistanceSensor leftSensor = new NextDistanceSensor("ls");
 
-    NextServo indicatorLight = new NextServo("il");
+    NextRGBIndicator indicatorLight = new NextRGBIndicator("il");
 
     public enum IndicatorLight{
         BLUE, RED, FULL, NOT
@@ -30,25 +31,23 @@ public class Sensor implements Mechanism {
         rightSensor.update();
         leftSensor.update();
 
-        switch (mode){
-            case RED:
-                val = RED_COLOR;
-                break;
+       switch (mode){
+           case NOT:
+               indicatorLight.setColor(NextRGBIndicator.Color.WHITE);
+               break;
 
-            case NOT:
-                val = NOT_COLOR;
-                break;
+           case RED:
+               indicatorLight.setColor(NextRGBIndicator.Color.RED);
+               break;
 
-            case BLUE:
-                val = BLUE_COLOR;
-                break;
+           case BLUE:
+               indicatorLight.setColor(NextRGBIndicator.Color.BLUE);
+               break;
 
-            case FULL:
-                val = FULL_COLOR;
-                break;
-        }
-
-        indicatorLight.setPosition(val);
+           case FULL:
+               indicatorLight.setColor(NextRGBIndicator.Color.GREEN);
+               break;
+       }
 
 
     }
@@ -64,10 +63,10 @@ public class Sensor implements Mechanism {
 
     public void allianceIndicator(boolean areWeRed){
         if(areWeRed){
-            indicatorLight.setPosition(RED_COLOR);
+            indicatorLight.setColor(NextRGBIndicator.Color.RED);
         }
         else{
-            indicatorLight.setPosition(BLUE_COLOR);
+            indicatorLight.setColor(NextRGBIndicator.Color.BLUE);
         }
     }
 }
