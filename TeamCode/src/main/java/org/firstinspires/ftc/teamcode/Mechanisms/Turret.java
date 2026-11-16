@@ -64,7 +64,7 @@ public class Turret implements Mechanism {
 
     }
 
-    public void getTurretAngle(Pose robotPose, boolean redAllience){
+    public void getTurretAngle(Pose robotPose, boolean redAllience, double Offset){
         double robotX = robotPose.x();
         double robotY = robotPose.y();
         double robotHeading = robotPose.heading();
@@ -103,7 +103,9 @@ public class Turret implements Mechanism {
 
         double trueAngleDegrees = Math.toDegrees(trueAngle);
 
-        trackingAngle = (trueAngleDegrees*DEGREES_PER_TICK) +0.5;
+        double offsetAngle = trueAngleDegrees + Offset;
+
+        trackingAngle = (offsetAngle*DEGREES_PER_TICK) +0.5;
 
         Telemetry.log("target Angle", trueAngle);
         Telemetry.log("robo heading", Math.toDegrees(robotHeading));

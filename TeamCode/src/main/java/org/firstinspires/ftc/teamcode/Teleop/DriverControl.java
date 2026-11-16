@@ -60,6 +60,8 @@ public class DriverControl extends NextOpMode {
 
     private Follower follower = Constants.create(hardwareMap);
 
+    public static double manual_Offset = 0;
+
 
     @Override
     public void disabledPeriodic() {
@@ -181,15 +183,9 @@ public class DriverControl extends NextOpMode {
         }
 
         if(choosePad.dpadRightWasPressed()){
-            GoalPose.blueAudienceX +=2;
-            GoalPose.blueRefereeX +=2;
-            GoalPose.redaudienceX +=2;
-            GoalPose.redRefereeX  +=2;
+            manual_Offset +=2;
         } else if (choosePad.dpadLeftWasPressed()) {
-            GoalPose.blueAudienceX -=2;
-            GoalPose.blueRefereeX -=2;
-            GoalPose.redaudienceX -=2;
-            GoalPose.redRefereeX  -=2;
+            manual_Offset -=2;
         }
 
         if(gamepad1.xWasPressed()){
@@ -225,7 +221,7 @@ public class DriverControl extends NextOpMode {
 
         Pose curentPose = follower.pose();
 
-        robot.turret.getTurretAngle(curentPose, redAlliance);
+        robot.turret.getTurretAngle(curentPose, redAlliance, manual_Offset);
         robot.shooter.refreshShooterVelo(curentPose, redAlliance);
         robot.hood.refreshHoodVal(curentPose, redAlliance);
         follower.update();
