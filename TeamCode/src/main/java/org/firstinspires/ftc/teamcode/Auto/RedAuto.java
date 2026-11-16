@@ -11,6 +11,7 @@ import com.pedropathing.paths.Path;
 
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.commands.Commands.waitUntil;
+import static com.pedropathing.ivy.groups.Groups.race;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 import static com.pedropathing.ivy.Scheduler.schedule;
@@ -56,11 +57,11 @@ public class RedAuto extends NextOpMode {
 
     private final Pose startPose = new Pose(54,8,Math.toRadians(90));
     private final Pose firstShootA = new Pose(55,32,Math.toRadians(270));
-    private final Pose grabGarden = new Pose(3,11.5,Math.toRadians(270));
-    private final Pose firstTransition = new Pose(34,42,Math.toRadians(270));
-    private final Pose secondTransition = new Pose(34,118,Math.toRadians(90));
+    private final Pose grabGarden = new Pose(2,11.5,Math.toRadians(270));
+    private final Pose firstTransition = new Pose(30,42,Math.toRadians(270));
+    private final Pose secondTransition = new Pose(30,118,Math.toRadians(90));
     private final Pose transitionShootR = new Pose(59,118,Math.toRadians(0));
-    private final Pose grabFlower = new Pose(56,129,Math.toRadians(90));
+    private final Pose grabFlower = new Pose(48,128,Math.toRadians(90));
     private final Pose endPose = new Pose(15,115,Math.toRadians(90));
     private final Pose beforeFlowerGrab = new Pose(50,118,Math.toRadians(90));
     private final Pose secondShootR = new Pose(59,133,Math.toRadians(0));
@@ -107,7 +108,8 @@ public class RedAuto extends NextOpMode {
         return parallel(
                 instant(()-> BallBlock.mode = BallBlock.BlockState.BALL_NO),
                 instant(()-> Shooter.mode = Shooter.ShooterMode.ON),
-                instant(()->Hood.mode = Hood.HoodState.SHOOT)
+                instant(()->Hood.mode = Hood.HoodState.SHOOT),
+                instant(()-> Arm.mode = Arm.FlowerPiviotState.UP)
         );
     }
     public static Command disableShoot() {
@@ -165,8 +167,10 @@ public class RedAuto extends NextOpMode {
                                 waitMs(500),
                                 follow(follower, StartGoFirstShootA()),
                                 intake(),
+                                race(
                                 follow(follower, FirstShootAGoGrabGarden()),
-                                waitMs(grabBallTime),
+                                waitMs(2000)
+                                        ),waitMs(grabBallTime),
                                 follow(follower, GrabGardenGoFirstTransition())
                         )),
                 instant(()-> Turret.mode = Turret.TurretTracking.OFF),
@@ -180,7 +184,8 @@ public class RedAuto extends NextOpMode {
                                 follow(follower, secondShootRGoTransitionShootR()),
                                 follow(follower, transitionShootRGoBeforeGrabFlower()),
                                 intakeToFlower(), waitMs(500),
-                                follow(follower, beforeGrabFlowerGoGrabFlower()), waitMs(1500),
+                                race(
+                                follow(follower, beforeGrabFlowerGoGrabFlower()), waitMs(3000)), waitMs(1500),
                                 follow(follower, GrabFlowerGoBeforeGrabFlower()), intakeNo(),
                                 follow(follower, beforeGrabFlowerGoTransitionShootR()),
                                 follow(follower, transitionShootRGoSecondShootR()), waitMs(turnTime),
@@ -188,7 +193,6 @@ public class RedAuto extends NextOpMode {
                                 follow(follower, secondShootRGoTransitionShootR()),
                                 follow(follower, transitionShootRGoEnd()),
                                 disableShoot()
-
         )));
     }
 

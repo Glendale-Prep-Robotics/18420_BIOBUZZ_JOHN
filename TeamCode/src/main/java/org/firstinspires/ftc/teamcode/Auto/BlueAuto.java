@@ -14,6 +14,7 @@ import static com.pedropathing.ivy.commands.Commands.instant;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.commands.Commands.waitUntil;
 import static com.pedropathing.ivy.groups.Groups.parallel;
+import static com.pedropathing.ivy.groups.Groups.race;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
@@ -59,7 +60,7 @@ public class BlueAuto extends NextOpMode {
     private final Pose firstTransition = new Pose(fieldLengthXY-30,fieldLengthXY-42,Math.toRadians(270)+pi);
     private final Pose secondTransition = new Pose(fieldLengthXY-30,fieldLengthXY-118,Math.toRadians(90)+pi);
     private final Pose transitionShootA = new Pose(fieldLengthXY-59,fieldLengthXY-118,Math.toRadians(0)+pi);
-    private final Pose grabFlower = new Pose(fieldLengthXY-56,fieldLengthXY-129,Math.toRadians(90)+pi);
+    private final Pose grabFlower = new Pose(fieldLengthXY-48,fieldLengthXY-128,Math.toRadians(90)+pi);
     private final Pose endPose = new Pose(fieldLengthXY-15,fieldLengthXY-115,Math.toRadians(90)+pi);
     private final Pose beforeFlowerGrab = new Pose(fieldLengthXY-50,fieldLengthXY-118,Math.toRadians(90)+pi);
     private final Pose secondShootA = new Pose(fieldLengthXY-59,fieldLengthXY-133,Math.toRadians(0)+pi);
@@ -120,7 +121,10 @@ public class BlueAuto extends NextOpMode {
                         waitMs(500),
                         follow(follower, StartGoFirstShootR()),
                         intake(),
+                        race(
                         follow(follower, FirstShootRGoGrabGarden()),
+                                waitMs(2000)
+                        ),
                         waitMs(grabBallTime),
                         follow(follower, GrabGardenGoFirstTransition())
                         )),
@@ -135,7 +139,8 @@ public class BlueAuto extends NextOpMode {
                         follow(follower, secondShootAGoTransitionShootA()),
                         follow(follower, transitionShootAGoBeforeGrabFlower()),
                         intakeToFlower(), waitMs(500),
-                        follow(follower, beforeGrabFlowerGoGrabFlower()), waitMs(1500),
+                        race(
+                        follow(follower, beforeGrabFlowerGoGrabFlower()), waitMs(3000)), waitMs(1500),
                         follow(follower, GrabFlowerGoBeforeGrabFlower()), intakeNo(),
                         follow(follower, beforeGrabFlowerGoTransitionShootA()),
                         follow(follower, transitionShootAGoSecondShootA()), waitMs(turnTime),

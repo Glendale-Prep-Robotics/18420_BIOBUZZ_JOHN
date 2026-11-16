@@ -28,6 +28,8 @@ public class Shooter implements Mechanism {
     public static double KV = 0.0000074;
     public static double KS = 0.005;
     public double KA = 0;
+
+    public static double voltageFactor = 12;
     //F then P then D.
 
     NextMotor shooterMotor2 = new NextMotor("sm2");
@@ -41,7 +43,7 @@ public class Shooter implements Mechanism {
 
     public double val;
 
-    public static double motorVelo = 82500;//good far shoot: 80545
+    public static double motorVelo = 80000;//good far shoot: 80545
 
     public static double farShoot = 82500;
 
@@ -72,7 +74,7 @@ public class Shooter implements Mechanism {
 
 
         realSpeed = Range.clip(power,0,1);
-        realSpeed = realSpeed * 12;
+        realSpeed = realSpeed * voltageFactor;
         shooterMotor1.setVoltage(Volts.of(realSpeed));
         Telemetry.log("current Speed", currentSpeed);
         Telemetry.log("setPoint", realSpeed);
@@ -134,7 +136,7 @@ public class Shooter implements Mechanism {
 
     public boolean ShooterAtVelocity() {
         double velo = shooterMotor2.getEncoderVelocity().abs(DegreesPerSecond);
-        if (velo > 82000) {
+        if (velo > 79500) {
             return true;
         } else {
             return false;
