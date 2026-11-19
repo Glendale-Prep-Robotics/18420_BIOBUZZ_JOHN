@@ -222,7 +222,7 @@ public class RedAuto extends NextOpMode {
     public void periodic() {//loop
         follower.update();
         Scheduler.execute();
-        robot.turret.getTurretAngle(follower.pose(), GlobalPose.redAlliance,0);
+        robot.turret.getTurretAngle(follower.pose(), GlobalPose.redAlliance,0,0);
 
         robot.shooter.refreshShooterVelo(follower.pose(), GlobalPose.redAlliance);
         robot.hood.refreshHoodVal(follower.pose(), GlobalPose.redAlliance);

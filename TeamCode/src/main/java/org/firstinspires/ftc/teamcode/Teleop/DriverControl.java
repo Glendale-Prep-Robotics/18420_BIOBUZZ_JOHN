@@ -60,7 +60,8 @@ public class DriverControl extends NextOpMode {
 
     private Follower follower = Constants.create(hardwareMap);
 
-    public static double manual_Offset = 0;
+    public static double manual_Offset_Audience = 0;
+    public static double manual_Offset_Referee = 0;
 
 
     @Override
@@ -183,9 +184,19 @@ public class DriverControl extends NextOpMode {
         }
 
         if(choosePad.dpadRightWasPressed()){
-            manual_Offset +=2;
+            if(follower.pose().y() > 70){
+                manual_Offset_Referee -=2;
+            }
+            else{
+                manual_Offset_Audience -=2;
+            }
         } else if (choosePad.dpadLeftWasPressed()) {
-            manual_Offset -=2;
+            if(follower.pose().y() > 70){
+                manual_Offset_Referee +=2;
+            }
+            else{
+                manual_Offset_Audience+=2;
+            }
         }
 
         if(gamepad1.xWasPressed()){
@@ -221,7 +232,7 @@ public class DriverControl extends NextOpMode {
 
         Pose curentPose = follower.pose();
 
-        robot.turret.getTurretAngle(curentPose, redAlliance, manual_Offset);
+        robot.turret.getTurretAngle(curentPose, redAlliance, manual_Offset_Audience, manual_Offset_Referee);
         robot.shooter.refreshShooterVelo(curentPose, redAlliance);
         robot.hood.refreshHoodVal(curentPose, redAlliance);
         follower.update();

@@ -179,7 +179,7 @@ public class BlueAuto extends NextOpMode {
 
         robot.shooter.refreshShooterVelo(follower.pose(), GlobalPose.redAlliance);
         robot.hood.refreshHoodVal(follower.pose(), GlobalPose.redAlliance);
-        robot.turret.getTurretAngle(follower.pose(), GlobalPose.redAlliance,0);
+        robot.turret.getTurretAngle(follower.pose(), GlobalPose.redAlliance,0,0);
 
     }
 

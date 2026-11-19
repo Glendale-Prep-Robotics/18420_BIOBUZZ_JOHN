@@ -64,7 +64,7 @@ public class Turret implements Mechanism {
 
     }
 
-    public void getTurretAngle(Pose robotPose, boolean redAllience, double Offset){
+    public void getTurretAngle(Pose robotPose, boolean redAllience, double AudienceOffset, double RefereeOffset){
         double robotX = robotPose.x();
         double robotY = robotPose.y();
         double robotHeading = robotPose.heading();
@@ -103,7 +103,13 @@ public class Turret implements Mechanism {
 
         double trueAngleDegrees = Math.toDegrees(trueAngle);
 
-        double offsetAngle = trueAngleDegrees + Offset;
+        double offsetAngle;
+        if (robotY > 70) {
+            offsetAngle = trueAngleDegrees + RefereeOffset;
+        }
+        else{
+            offsetAngle = trueAngleDegrees + AudienceOffset;
+        }
 
         trackingAngle = (offsetAngle*DEGREES_PER_TICK) +0.5;
 
